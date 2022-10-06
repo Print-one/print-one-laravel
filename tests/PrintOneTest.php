@@ -249,7 +249,7 @@ class PrintOneTest extends TestCase
 
     public function test_it_can_fetch_template_previews(): void
     {
-        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
+        $imageString = file_get_contents(__DIR__.'/images/card-preview.png');
 
         Http::fake([
             'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
@@ -279,7 +279,7 @@ class PrintOneTest extends TestCase
 
     public function test_it_throws_exception_when_fetching_preview_fails(): void
     {
-        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
+        $imageString = file_get_contents(__DIR__.'/images/card-preview.png');
 
         Http::fake([
             'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
