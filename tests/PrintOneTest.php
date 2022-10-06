@@ -2,7 +2,6 @@
 
 use Carbon\Carbon;
 use Illuminate\Http\Client\Request;
-use Illuminate\Http\File;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -248,7 +247,7 @@ class PrintOneTest extends TestCase
 
     public function test_it_can_fetch_template_previews(): void
     {
-        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
+        $imageString = file_get_contents(__DIR__.'/images/card-preview.png');
 
         Http::fake([
             'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
@@ -273,12 +272,12 @@ class PrintOneTest extends TestCase
         $this->assertIsString($previewImage);
         $this->assertEquals($imageString, $previewImage);
 
-        Http::assertSent(fn (Request $request) => $request->url() === "https://api.print.one/v1/templates/preview/tmpl_a8763477-2430-4034-880b-668604e61abb/6");
+        Http::assertSent(fn (Request $request) => $request->url() === 'https://api.print.one/v1/templates/preview/tmpl_a8763477-2430-4034-880b-668604e61abb/6');
     }
 
     public function test_it_throws_exception_when_fetching_preview_fails(): void
     {
-        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
+        $imageString = file_get_contents(__DIR__.'/images/card-preview.png');
 
         Http::fake([
             'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),

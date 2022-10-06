@@ -89,7 +89,7 @@ class PrintOne
             $waited += 5;
         }
 
-        if (!$response || $response->failed()) {
+        if (! $response || $response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview.');
         }
 
