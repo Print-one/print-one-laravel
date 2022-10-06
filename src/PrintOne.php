@@ -18,11 +18,11 @@ class PrintOne
 
     private PendingRequest $http;
 
-    public function __construct(string $key)
+    public function __construct()
     {
         $this->http = Http::baseUrl($this->baseUrl)
             ->withHeaders([
-                'X-Api-Key' => $key,
+                'X-Api-Key' => config('print-one.api_key'),
             ]);
     }
 

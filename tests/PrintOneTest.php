@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Nexxtbi\PrintOne\DTO\Address;
 use Nexxtbi\PrintOne\DTO\Order;
@@ -21,11 +22,12 @@ class PrintOneTest extends TestCase
         parent::setUp();
 
         Http::allowStrayRequests();
+        Config::set('print-one.api_key', 'foo');
     }
 
-    public function test_it_can_be_initiated_with_config(): void
+    public function test_it_can_be_initiated(): void
     {
-        $printOne = new PrintOne(key: 'foo');
+        $printOne = new PrintOne();
 
         $this->assertInstanceOf(PrintOne::class, $printOne);
     }
@@ -74,7 +76,7 @@ class PrintOneTest extends TestCase
             'https://api.print.one/v1/templates?*' => Http::response($fakeResponse),
         ]);
 
-        $printOne = new PrintOne(key: 'foo');
+        $printOne = new PrintOne();
 
         $templates = $printOne->templates(page: 1, size: 50);
 
@@ -98,7 +100,7 @@ class PrintOneTest extends TestCase
             'https://api.print.one/v1/templates?*' => Http::response(status: Response::HTTP_INTERNAL_SERVER_ERROR),
         ]);
 
-        $printOne = new PrintOne(key: 'foo');
+        $printOne = new PrintOne();
 
         $this->expectException(CouldNotFetchTemplates::class);
         $this->expectExceptionMessage('The Print.One API has an internal server error.');
@@ -159,7 +161,7 @@ class PrintOneTest extends TestCase
             'https://api.print.one/v1/orders' => Http::response($fakeResponse),
         ]);
 
-        $printOne = new PrintOne(key: 'foo');
+        $printOne = new PrintOne();
 
         [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
 
@@ -209,7 +211,7 @@ class PrintOneTest extends TestCase
 
         [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
 
-        $printOne = new PrintOne('fake');
+        $printOne = new PrintOne();
 
         $this->expectException(CouldNotPlaceOrder::class);
         $this->expectExceptionMessage("The order is invalid: 'tmpl_a8763477-2430-4034-880b-668604e61abb' has format: 'POSTCARD_A6' while you have provided: 'POSTCARD_A5'.");
@@ -231,7 +233,7 @@ class PrintOneTest extends TestCase
 
         [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
 
-        $printOne = new PrintOne('fake');
+        $printOne = new PrintOne();
 
         $this->expectException(CouldNotPlaceOrder::class);
         $this->expectExceptionMessage('The Print.One API has an internal server error.');
@@ -247,7 +249,7 @@ class PrintOneTest extends TestCase
 
     public function test_it_can_fetch_template_previews(): void
     {
-        $imageString = file_get_contents(__DIR__.'/images/card-preview.png');
+        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
 
         Http::fake([
             'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
@@ -257,7 +259,7 @@ class PrintOneTest extends TestCase
             ]),
         ]);
 
-        $printOne = new PrintOne('fake');
+        $printOne = new PrintOne();
 
         $template = Template::fromArray([
             'id' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
@@ -277,14 +279,14 @@ class PrintOneTest extends TestCase
 
     public function test_it_throws_exception_when_fetching_preview_fails(): void
     {
-        $imageString = file_get_contents(__DIR__.'/images/card-preview.png');
+        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
 
         Http::fake([
             'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
             'https://api.print.one/v1/storage/template/preview/*' => Http::response(status: Response::HTTP_INTERNAL_SERVER_ERROR),
         ]);
 
-        $printOne = new PrintOne('fake');
+        $printOne = new PrintOne();
 
         $template = Template::fromArray([
             'id' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
