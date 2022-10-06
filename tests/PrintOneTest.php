@@ -102,7 +102,7 @@ class PrintOneTest extends TestCase
         $printOne = new PrintOne();
 
         $this->expectException(CouldNotFetchTemplates::class);
-        $this->expectExceptionMessage('The Print.One API has an internal server error.');
+        $this->expectExceptionMessage('The Print.one API has an internal server error.');
 
         $templates = $printOne->templates(page: 1, size: 50);
     }
@@ -235,7 +235,7 @@ class PrintOneTest extends TestCase
         $printOne = new PrintOne();
 
         $this->expectException(CouldNotPlaceOrder::class);
-        $this->expectExceptionMessage('The Print.One API has an internal server error.');
+        $this->expectExceptionMessage('The Print.one API has an internal server error.');
 
         $order = $printOne->order(
             templateFront: $templateFront,

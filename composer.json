@@ -38,6 +38,7 @@
         }
     },
     "scripts": {
+        "test": "vendor/bin/phpunit tests",
         "format": "vendor/bin/pint"
     },
     "config": {
