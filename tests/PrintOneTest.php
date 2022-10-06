@@ -21,7 +21,6 @@ class PrintOneTest extends TestCase
     {
         parent::setUp();
 
-        Http::allowStrayRequests();
         Config::set('print-one.api_key', 'foo');
     }
 
