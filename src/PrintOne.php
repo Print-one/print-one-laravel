@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Nexxtbi\PrintOne\DTO\Address;
 use Nexxtbi\PrintOne\DTO\Order;
 use Nexxtbi\PrintOne\DTO\Template;
+use Nexxtbi\PrintOne\Exceptions\CouldNotFetchTemplates;
 use Nexxtbi\PrintOne\Exceptions\CouldNotPlaceOrder;
 
 class PrintOne
@@ -27,6 +28,10 @@ class PrintOne
     public function templates(int $page, int $size): Collection
     {
         $response = $this->http->get('templates', ['page' => $page, 'size' => $size]);
+
+        if($response->serverError()){
+            throw new CouldNotFetchTemplates("The Print.One API has an internal server error.");
+        }
 
         return $response
             ->collect('data')

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Nexxtbi\PrintOne\DTO\Address;
 use Nexxtbi\PrintOne\DTO\Order;
 use Nexxtbi\PrintOne\DTO\Template;
+use Nexxtbi\PrintOne\Exceptions\CouldNotFetchTemplates;
 use Nexxtbi\PrintOne\Exceptions\CouldNotPlaceOrder;
 use Nexxtbi\PrintOne\PrintOne;
 use Nexxtbi\PrintOne\Tests\TestCase;
@@ -81,6 +82,19 @@ class PrintOneTest extends TestCase
         Http::assertSent(function (Request $request) {
             return $request->hasHeader('X-Api-Key', 'foo') && $request->url() == 'https://api.print.one/v1/templates?page=1&size=50';
         });
+    }
+
+    public function test_api_issue_while_fetching_templates_throws_exception(){
+        Http::fake([
+            'https://api.print.one/v1/templates?*' => Http::response(status: Response::HTTP_INTERNAL_SERVER_ERROR),
+        ]);
+
+        $printOne = new PrintOne(key: 'foo');
+
+        $this->expectException(CouldNotFetchTemplates::class);
+        $this->expectExceptionMessage("The Print.One API has an internal server error.");
+
+        $templates = $printOne->templates(page: 1, size: 50);
     }
 
     public function test_it_can_order_a_card(): void
@@ -200,7 +214,7 @@ class PrintOneTest extends TestCase
         );
     }
 
-    public function test_api_problem_throws_exception(): void
+    public function test_api_issue_while_ordering_throws_exception(): void
     {
         Http::fake([
             'https://api.print.one/v1/orders' => Http::response(status: Response::HTTP_INTERNAL_SERVER_ERROR),
