@@ -1,16 +1,16 @@
 <?php
 
-namespace Nexxtbi\PrintOne;
+namespace Nexibi\PrintOne;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Nexxtbi\PrintOne\DTO\Address;
-use Nexxtbi\PrintOne\DTO\Order;
-use Nexxtbi\PrintOne\DTO\Template;
-use Nexxtbi\PrintOne\Exceptions\CouldNotFetchPreview;
-use Nexxtbi\PrintOne\Exceptions\CouldNotFetchTemplates;
-use Nexxtbi\PrintOne\Exceptions\CouldNotPlaceOrder;
+use Nexibi\PrintOne\DTO\Address;
+use Nexibi\PrintOne\DTO\Order;
+use Nexibi\PrintOne\DTO\Template;
+use Nexibi\PrintOne\Exceptions\CouldNotFetchPreview;
+use Nexibi\PrintOne\Exceptions\CouldNotFetchTemplates;
+use Nexibi\PrintOne\Exceptions\CouldNotPlaceOrder;
 
 class PrintOne
 {

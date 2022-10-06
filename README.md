@@ -1,9 +1,9 @@
 # This is my package print-one
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/nexxtbi/print-one.svg?style=flat-square)](https://packagist.org/packages/nexxtbi/print-one)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/nexxtbi/print-one/run-tests?label=tests)](https://github.com/nexxtbi/print-one/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/nexxtbi/print-one/Fix%20PHP%20code%20style%20issues?label=code%20style)](https://github.com/nexxtbi/print-one/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/nexxtbi/print-one.svg?style=flat-square)](https://packagist.org/packages/nexxtbi/print-one)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/nexibi/print-one.svg?style=flat-square)](https://packagist.org/packages/nexibi/print-one)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/nexibi/print-one/run-tests?label=tests)](https://github.com/nexibi/print-one/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/nexibi/print-one/Fix%20PHP%20code%20style%20issues?label=code%20style)](https://github.com/nexibi/print-one/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/nexibi/print-one.svg?style=flat-square)](https://packagist.org/packages/nexibi/print-one)
 
 This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
 
@@ -20,7 +20,7 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 You can install the package via composer:
 
 ```bash
-composer require nexxtbi/print-one
+composer require nexibi/print-one
 ```
 
 You can publish and run the migrations with:
@@ -52,8 +52,8 @@ php artisan vendor:publish --tag="print-one-views"
 ## Usage
 
 ```php
-$printOne = new Nexxtbi\PrintOne();
-echo $printOne->echoPhrase('Hello, Nexxtbi!');
+$printOne = new Nexibi\PrintOne();
+echo $printOne->echoPhrase('Hello, Nexibi!');
 ```
 
 ## Testing
@@ -76,7 +76,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Nexxtbi](https://github.com/Nexxtbi)
+- [Nexibi](https://github.com/Nexibi)
 - [All Contributors](../../contributors)
 
 ## License

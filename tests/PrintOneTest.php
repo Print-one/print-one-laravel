@@ -6,14 +6,14 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
-use Nexxtbi\PrintOne\DTO\Address;
-use Nexxtbi\PrintOne\DTO\Order;
-use Nexxtbi\PrintOne\DTO\Template;
-use Nexxtbi\PrintOne\Exceptions\CouldNotFetchPreview;
-use Nexxtbi\PrintOne\Exceptions\CouldNotFetchTemplates;
-use Nexxtbi\PrintOne\Exceptions\CouldNotPlaceOrder;
-use Nexxtbi\PrintOne\PrintOne;
-use Nexxtbi\PrintOne\Tests\TestCase;
+use Nexibi\PrintOne\DTO\Address;
+use Nexibi\PrintOne\DTO\Order;
+use Nexibi\PrintOne\DTO\Template;
+use Nexibi\PrintOne\Exceptions\CouldNotFetchPreview;
+use Nexibi\PrintOne\Exceptions\CouldNotFetchTemplates;
+use Nexibi\PrintOne\Exceptions\CouldNotPlaceOrder;
+use Nexibi\PrintOne\PrintOne;
+use Nexibi\PrintOne\Tests\TestCase;
 
 class PrintOneTest extends TestCase
 {
@@ -321,7 +321,7 @@ class PrintOneTest extends TestCase
         ]);
 
         $sender = new Address(
-            name: 'Nexxtbi',
+            name: 'Nexibi',
             address: 'Sendstreet 10',
             postalCode: '1234 AB',
             city: 'Zwolle',

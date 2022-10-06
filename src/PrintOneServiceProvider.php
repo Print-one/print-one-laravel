@@ -1,6 +1,6 @@
 <?php
 
-namespace Nexxtbi\PrintOne;
+namespace Nexibi\PrintOne;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;

@@ -1,16 +1,16 @@
 {
-    "name": "nexxtbi/print-one",
+    "name": "nexibi/print-one",
     "description": "This is my package print-one",
     "keywords": [
-        "Nexxtbi",
+        "nexibi",
         "laravel",
         "print-one"
     ],
-    "homepage": "https://github.com/nexxtbi/print-one",
+    "homepage": "https://github.com/nexibi/print-one",
     "license": "MIT",
     "authors": [
         {
-            "name": "Nexxtbi",
+            "name": "Nexibi",
             "email": "jan-paul@nexxtmove.nl",
             "role": "Developer"
         }
@@ -35,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Nexxtbi\\PrintOne\\": "src",
-            "Nexxtbi\\PrintOne\\Database\\Factories\\": "database/factories"
+            "Nexibi\\PrintOne\\": "src",
+            "Nexibi\\PrintOne\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Nexxtbi\\PrintOne\\Tests\\": "tests"
+            "Nexibi\\PrintOne\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -58,10 +58,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Nexxtbi\\PrintOne\\PrintOneServiceProvider"
+                "Nexibi\\PrintOne\\PrintOneServiceProvider"
             ],
             "aliases": {
-                "PrintOne": "Nexxtbi\\PrintOne\\Facades\\PrintOne"
+                "PrintOne": "Nexibi\\PrintOne\\Facades\\PrintOne"
             }
         }
     },

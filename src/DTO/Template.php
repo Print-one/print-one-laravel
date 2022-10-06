@@ -1,6 +1,6 @@
 <?php
 
-namespace Nexxtbi\PrintOne\DTO;
+namespace Nexibi\PrintOne\DTO;
 
 use Carbon\Carbon;
 

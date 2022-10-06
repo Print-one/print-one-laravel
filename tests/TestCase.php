@@ -1,8 +1,8 @@
 <?php
 
-namespace Nexxtbi\PrintOne\Tests;
+namespace Nexibi\PrintOne\Tests;
 
-use Nexxtbi\PrintOne\PrintOneServiceProvider;
+use Nexibi\PrintOne\PrintOneServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra

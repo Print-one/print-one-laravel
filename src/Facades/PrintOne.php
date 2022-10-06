@@ -1,16 +1,16 @@
 <?php
 
-namespace Nexxtbi\PrintOne\Facades;
+namespace Nexibi\PrintOne\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Nexxtbi\PrintOne\PrintOne
+ * @see \Nexibi\PrintOne\PrintOne
  */
 class PrintOne extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \Nexxtbi\PrintOne\PrintOne::class;
+        return \Nexibi\PrintOne\PrintOne::class;
     }
 }
