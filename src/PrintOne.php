@@ -31,7 +31,7 @@ class PrintOne
         $response = $this->http->get('templates', ['page' => $page, 'size' => $size]);
 
         if ($response->serverError()) {
-            throw new CouldNotFetchTemplates('The Print.one API has an internal server error.');
+            throw new CouldNotFetchTemplates('Something went wrong while fetching the templates from the Print.one API.');
         }
 
         return $response
@@ -59,7 +59,7 @@ class PrintOne
         }
 
         if ($response->serverError()) {
-            throw new CouldNotPlaceOrder('The Print.one API has an internal server error.');
+            throw new CouldNotPlaceOrder('Something went wrong while placing the order in the Print.one API.');
         }
 
         return Order::fromArray($response->json());
@@ -70,7 +70,7 @@ class PrintOne
         $response = $this->http->get("templates/preview/{$template->id}/{$template->version}");
 
         if ($response->failed()) {
-            throw new CouldNotFetchPreview('Something went wrong while fetching the preview.');
+            throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 
         $previewId = $response->body();
@@ -90,7 +90,7 @@ class PrintOne
         }
 
         if (! $response || $response->failed()) {
-            throw new CouldNotFetchPreview('Something went wrong while fetching the preview.');
+            throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 
         return $response->body();
