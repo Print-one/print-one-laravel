@@ -84,7 +84,8 @@ class PrintOneTest extends TestCase
         });
     }
 
-    public function test_api_issue_while_fetching_templates_throws_exception(){
+    public function test_api_issue_while_fetching_templates_throws_exception()
+    {
         Http::fake([
             'https://api.print.one/v1/templates?*' => Http::response(status: Response::HTTP_INTERNAL_SERVER_ERROR),
         ]);
@@ -92,7 +93,7 @@ class PrintOneTest extends TestCase
         $printOne = new PrintOne(key: 'foo');
 
         $this->expectException(CouldNotFetchTemplates::class);
-        $this->expectExceptionMessage("The Print.One API has an internal server error.");
+        $this->expectExceptionMessage('The Print.One API has an internal server error.');
 
         $templates = $printOne->templates(page: 1, size: 50);
     }

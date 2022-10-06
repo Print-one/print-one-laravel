@@ -29,8 +29,8 @@ class PrintOne
     {
         $response = $this->http->get('templates', ['page' => $page, 'size' => $size]);
 
-        if($response->serverError()){
-            throw new CouldNotFetchTemplates("The Print.One API has an internal server error.");
+        if ($response->serverError()) {
+            throw new CouldNotFetchTemplates('The Print.One API has an internal server error.');
         }
 
         return $response
