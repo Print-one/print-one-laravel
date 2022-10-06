@@ -3,8 +3,8 @@
 namespace Nexxtbi\PrintOne\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Nexxtbi\PrintOne\PrintOneServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {

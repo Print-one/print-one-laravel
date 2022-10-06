@@ -2,9 +2,9 @@
 
 namespace Nexxtbi\PrintOne;
 
+use Nexxtbi\PrintOne\Commands\PrintOneCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Nexxtbi\PrintOne\Commands\PrintOneCommand;
 
 class PrintOneServiceProvider extends PackageServiceProvider
 {
