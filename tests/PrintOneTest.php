@@ -2,9 +2,13 @@
 
 use Carbon\Carbon;
 use Illuminate\Http\Client\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Nexxtbi\PrintOne\DTO\Address;
+use Nexxtbi\PrintOne\DTO\Order;
 use Nexxtbi\PrintOne\DTO\Template;
+use Nexxtbi\PrintOne\Exceptions\CouldNotPlaceOrder;
 use Nexxtbi\PrintOne\PrintOne;
 use Nexxtbi\PrintOne\Tests\TestCase;
 
@@ -74,8 +78,188 @@ class PrintOneTest extends TestCase
         $this->assertEquals($fakeResponse["data"][0]['version'], $templates[0]->version);
         $this->assertTrue(Carbon::parse($fakeResponse["data"][0]['updatedAt'], 'UTC')->eq($templates[0]->updatedAt));
 
-        Http::assertSent(function(Request $request){
+        Http::assertSent(function (Request $request) {
             return $request->hasHeader('X-Api-Key', 'foo') && $request->url() == 'https://api.print.one/v1/templates?page=1&size=50';
         });
+    }
+
+    public function test_it_can_order_a_card(): void
+    {
+        $fakeResponse = [
+            "id" => "ord_25a36175-52c8-4c81-96fc-1d829af9ffee",
+            "sender" => [
+                "city" => "string",
+                "name" => "string",
+                "address" => "string",
+                "country" => "string",
+                "postalCode" => "string"
+            ],
+            "recipient" => [
+                "city" => "string",
+                "name" => "string",
+                "address" => "string",
+                "country" => "string",
+                "postalCode" => "string"
+            ],
+            "mergeVariables" => [
+                "lastName" => "Duck",
+                "firstName" => "Donald"
+            ],
+            "billingId" => "string",
+            "isBillable" => false,
+            "status" => "order_created",
+            "format" => "POSTCARD_A6",
+            "customerId" => "",
+            "createdAt" => "2022-10-06T08:49:40.368Z",
+            "updatedAt" => "2022-10-06T08:49:40.368Z",
+            "pages" => [
+                [
+                    "id" => "90238dbd-623e-472a-892d-0ae7dccd5d57",
+                    "templateId" => "tmpl_a8763477-2430-4034-880b-668604e61abb",
+                    "order" => 1,
+                    "cardId" => "ord_25a36175-52c8-4c81-96fc-1d829af9ffee",
+                    "createdAt" => "2022-10-06T08:49:40.368Z",
+                    "updatedAt" => "2022-10-06T08:49:40.368Z"
+                ],
+                [
+                    "id" => "be52a381-8be8-4ccc-8c98-f73a53cf0d3b",
+                    "templateId" => "tmpl_a8763477-2430-4034-880b-668604e61abb",
+                    "order" => 2,
+                    "cardId" => "ord_25a36175-52c8-4c81-96fc-1d829af9ffee",
+                    "createdAt" => "2022-10-06T08:49:40.368Z",
+                    "updatedAt" => "2022-10-06T08:49:40.368Z"
+                ]
+            ]
+        ];
+
+        Http::fake([
+            'https://api.print.one/v1/orders' => Http::response($fakeResponse),
+        ]);
+
+        $printOne = new PrintOne(key: "foo");
+
+        [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
+
+        $order = $printOne->order(
+            templateFront: $templateFront,
+            templateBack: $templateBack,
+            mergeVariables: $mergeVariables,
+            sender: $sender,
+            recipient: $recipient
+        );
+
+        Http::assertSent(
+            fn (Request $request) => $request->url() === 'https://api.print.one/v1/orders' &&
+                $request['pages'][0] === $templateFront->id  &&
+                $request['sender'] === $sender->toArray() &&
+                $request['recipient'] === $recipient->toArray() &&
+                $request['format'] === $templateFront->format
+        );
+
+        $this->assertInstanceOf(Order::class, $order);
+
+        $this->assertEquals($fakeResponse['id'], $order->id);
+        $this->assertEquals('order_created', $order->status);
+        $this->assertTrue(Carbon::parse($fakeResponse['createdAt'], 'UTC')->eq($order->createdAt));
+        $this->assertFalse($order->isBillable);
+    }
+
+    public function test_invalid_order_throws_exception(): void
+    {
+        $fakeResponse =  [
+            "error" => "The order is invalid.",
+            "errors" => [
+                [
+                    "type" => "template",
+                    "message" => "'tmpl_a8763477-2430-4034-880b-668604e61abb' has format: 'POSTCARD_A6' while you have provided: 'POSTCARD_A5'."
+                ],
+                [
+                    "type" => "template",
+                    "message" => "'tmpl_a8763477-2430-4034-880b-668604e61abb' has format: 'POSTCARD_A6' while you have provided: 'POSTCARD_A5'."
+                ]
+            ]
+        ];
+
+        Http::fake([
+            'https://api.print.one/v1/orders' => Http::response($fakeResponse, status: Response::HTTP_BAD_REQUEST),
+        ]);
+
+        [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
+
+        $printOne = new PrintOne('fake');
+
+        $this->expectException(CouldNotPlaceOrder::class);
+        $this->expectExceptionMessage("The order is invalid: 'tmpl_a8763477-2430-4034-880b-668604e61abb' has format: 'POSTCARD_A6' while you have provided: 'POSTCARD_A5'.");
+
+        $order = $printOne->order(
+            templateFront: $templateFront,
+            templateBack: $templateBack,
+            mergeVariables: $mergeVariables,
+            sender: $sender,
+            recipient: $recipient
+        );
+    }
+
+    public function test_api_problem_throws_exception(): void
+    {
+        Http::fake([
+            'https://api.print.one/v1/orders' => Http::response(status: Response::HTTP_INTERNAL_SERVER_ERROR),
+        ]);
+
+        [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
+
+        $printOne = new PrintOne('fake');
+
+        $this->expectException(CouldNotPlaceOrder::class);
+        $this->expectExceptionMessage("The Print.One API has an internal server error.");
+
+        $order = $printOne->order(
+            templateFront: $templateFront,
+            templateBack: $templateBack,
+            mergeVariables: $mergeVariables,
+            sender: $sender,
+            recipient: $recipient
+        );
+    }
+
+    private function createOrder() : array {
+        $templateFront = Template::fromArray([
+            "id" => "tmpl_a8763477-2430-4034-880b-668604e61abb",
+            "name" => "voorkant",
+            "format" => "POSTCARD_A6",
+            "version" => 6,
+            "updatedAt" => "2022-09-27T14:48:00.514Z"
+        ]);
+
+        $templateBack = Template::fromArray([
+            "id" => "tmpl_a8763477-2430-4034-880b-668604e61abb",
+            "name" => "voorkant",
+            "format" => "POSTCARD_A6",
+            "version" => 6,
+            "updatedAt" => "2022-09-27T14:48:00.514Z"
+        ]);
+
+        $sender = new Address(
+            name: 'Nexxtbi',
+            address: 'Sendstreet 10',
+            postalCode: '1234 AB',
+            city: 'Zwolle',
+            country: 'The Netherlands',
+        );
+
+        $recipient = new Address(
+            name: 'John doe',
+            address: 'Receivelane 20',
+            postalCode: '9870 YZ',
+            city: 'Dalfsen',
+            country: 'The Netherlands',
+        );
+
+        $mergeVariables = [
+            'content' => '<h1>Hello World</h1>'
+        ];
+
+        return [$templateFront, $templateBack, $mergeVariables, $sender, $recipient];
+
     }
 }

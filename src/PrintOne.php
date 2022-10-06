@@ -5,7 +5,10 @@ namespace Nexxtbi\PrintOne;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Nexxtbi\PrintOne\DTO\Address;
+use Nexxtbi\PrintOne\DTO\Order;
 use Nexxtbi\PrintOne\DTO\Template;
+use Nexxtbi\PrintOne\Exceptions\CouldNotPlaceOrder;
 
 class PrintOne
 {
@@ -28,5 +31,31 @@ class PrintOne
         return $response
             ->collect('data')
             ->map(fn ($data) => Template::fromArray($data));
+    }
+
+    public function order(Template $templateFront, Template $templateBack, array $mergeVariables, Address $sender, Address $recipient): Order
+    {
+        $response = $this->http->post('orders', [
+            'sender' => $sender->toArray(),
+            'recipient' => $recipient->toArray(),
+            'format' => $templateFront->format,
+            'pages' => [
+                $templateFront->id,
+                $templateBack->id,
+            ],
+            'mergeVariables' => $mergeVariables,
+        ]);
+
+        if ($response->clientError()) {
+            $firstError = $response->json('errors.0.message');
+
+            throw new CouldNotPlaceOrder("The order is invalid: {$firstError}");
+        }
+
+        if ($response->serverError()) {
+            throw new CouldNotPlaceOrder("The Print.One API has an internal server error.");
+        }
+
+        return Order::fromArray($response->json());
     }
 }
