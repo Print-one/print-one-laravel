@@ -100,57 +100,57 @@ class PrintOneTest extends TestCase
     public function test_it_can_order_a_card(): void
     {
         $fakeResponse = [
-            "id" => "ord_25a36175-52c8-4c81-96fc-1d829af9ffee",
-            "sender" => [
-                "city" => "string",
-                "name" => "string",
-                "address" => "string",
-                "country" => "string",
-                "postalCode" => "string"
+            'id' => 'ord_25a36175-52c8-4c81-96fc-1d829af9ffee',
+            'sender' => [
+                'city' => 'string',
+                'name' => 'string',
+                'address' => 'string',
+                'country' => 'string',
+                'postalCode' => 'string',
             ],
-            "recipient" => [
-                "city" => "string",
-                "name" => "string",
-                "address" => "string",
-                "country" => "string",
-                "postalCode" => "string"
+            'recipient' => [
+                'city' => 'string',
+                'name' => 'string',
+                'address' => 'string',
+                'country' => 'string',
+                'postalCode' => 'string',
             ],
-            "mergeVariables" => [
-                "lastName" => "Duck",
-                "firstName" => "Donald"
+            'mergeVariables' => [
+                'lastName' => 'Duck',
+                'firstName' => 'Donald',
             ],
-            "billingId" => "string",
-            "isBillable" => false,
-            "status" => "order_created",
-            "format" => "POSTCARD_A6",
-            "customerId" => "",
-            "createdAt" => "2022-10-06T08:49:40.368Z",
-            "updatedAt" => "2022-10-06T08:49:40.368Z",
-            "pages" => [
+            'billingId' => 'string',
+            'isBillable' => false,
+            'status' => 'order_created',
+            'format' => 'POSTCARD_A6',
+            'customerId' => '',
+            'createdAt' => '2022-10-06T08:49:40.368Z',
+            'updatedAt' => '2022-10-06T08:49:40.368Z',
+            'pages' => [
                 [
-                    "id" => "90238dbd-623e-472a-892d-0ae7dccd5d57",
-                    "templateId" => "tmpl_a8763477-2430-4034-880b-668604e61abb",
-                    "order" => 1,
-                    "cardId" => "ord_25a36175-52c8-4c81-96fc-1d829af9ffee",
-                    "createdAt" => "2022-10-06T08:49:40.368Z",
-                    "updatedAt" => "2022-10-06T08:49:40.368Z"
+                    'id' => '90238dbd-623e-472a-892d-0ae7dccd5d57',
+                    'templateId' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
+                    'order' => 1,
+                    'cardId' => 'ord_25a36175-52c8-4c81-96fc-1d829af9ffee',
+                    'createdAt' => '2022-10-06T08:49:40.368Z',
+                    'updatedAt' => '2022-10-06T08:49:40.368Z',
                 ],
                 [
-                    "id" => "be52a381-8be8-4ccc-8c98-f73a53cf0d3b",
-                    "templateId" => "tmpl_a8763477-2430-4034-880b-668604e61abb",
-                    "order" => 2,
-                    "cardId" => "ord_25a36175-52c8-4c81-96fc-1d829af9ffee",
-                    "createdAt" => "2022-10-06T08:49:40.368Z",
-                    "updatedAt" => "2022-10-06T08:49:40.368Z"
-                ]
-            ]
+                    'id' => 'be52a381-8be8-4ccc-8c98-f73a53cf0d3b',
+                    'templateId' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
+                    'order' => 2,
+                    'cardId' => 'ord_25a36175-52c8-4c81-96fc-1d829af9ffee',
+                    'createdAt' => '2022-10-06T08:49:40.368Z',
+                    'updatedAt' => '2022-10-06T08:49:40.368Z',
+                ],
+            ],
         ];
 
         Http::fake([
             'https://api.print.one/v1/orders' => Http::response($fakeResponse),
         ]);
 
-        $printOne = new PrintOne(key: "foo");
+        $printOne = new PrintOne(key: 'foo');
 
         [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
 
@@ -164,7 +164,7 @@ class PrintOneTest extends TestCase
 
         Http::assertSent(
             fn (Request $request) => $request->url() === 'https://api.print.one/v1/orders' &&
-                $request['pages'][0] === $templateFront->id  &&
+                $request['pages'][0] === $templateFront->id &&
                 $request['sender'] === $sender->toArray() &&
                 $request['recipient'] === $recipient->toArray() &&
                 $request['format'] === $templateFront->format
@@ -180,18 +180,18 @@ class PrintOneTest extends TestCase
 
     public function test_invalid_order_throws_exception(): void
     {
-        $fakeResponse =  [
-            "error" => "The order is invalid.",
-            "errors" => [
+        $fakeResponse = [
+            'error' => 'The order is invalid.',
+            'errors' => [
                 [
-                    "type" => "template",
-                    "message" => "'tmpl_a8763477-2430-4034-880b-668604e61abb' has format: 'POSTCARD_A6' while you have provided: 'POSTCARD_A5'."
+                    'type' => 'template',
+                    'message' => "'tmpl_a8763477-2430-4034-880b-668604e61abb' has format: 'POSTCARD_A6' while you have provided: 'POSTCARD_A5'.",
                 ],
                 [
-                    "type" => "template",
-                    "message" => "'tmpl_a8763477-2430-4034-880b-668604e61abb' has format: 'POSTCARD_A6' while you have provided: 'POSTCARD_A5'."
-                ]
-            ]
+                    'type' => 'template',
+                    'message' => "'tmpl_a8763477-2430-4034-880b-668604e61abb' has format: 'POSTCARD_A6' while you have provided: 'POSTCARD_A5'.",
+                ],
+            ],
         ];
 
         Http::fake([
@@ -225,7 +225,7 @@ class PrintOneTest extends TestCase
         $printOne = new PrintOne('fake');
 
         $this->expectException(CouldNotPlaceOrder::class);
-        $this->expectExceptionMessage("The Print.One API has an internal server error.");
+        $this->expectExceptionMessage('The Print.One API has an internal server error.');
 
         $order = $printOne->order(
             templateFront: $templateFront,
@@ -236,21 +236,22 @@ class PrintOneTest extends TestCase
         );
     }
 
-    private function createOrder() : array {
+    private function createOrder(): array
+    {
         $templateFront = Template::fromArray([
-            "id" => "tmpl_a8763477-2430-4034-880b-668604e61abb",
-            "name" => "voorkant",
-            "format" => "POSTCARD_A6",
-            "version" => 6,
-            "updatedAt" => "2022-09-27T14:48:00.514Z"
+            'id' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
+            'name' => 'voorkant',
+            'format' => 'POSTCARD_A6',
+            'version' => 6,
+            'updatedAt' => '2022-09-27T14:48:00.514Z',
         ]);
 
         $templateBack = Template::fromArray([
-            "id" => "tmpl_a8763477-2430-4034-880b-668604e61abb",
-            "name" => "voorkant",
-            "format" => "POSTCARD_A6",
-            "version" => 6,
-            "updatedAt" => "2022-09-27T14:48:00.514Z"
+            'id' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
+            'name' => 'voorkant',
+            'format' => 'POSTCARD_A6',
+            'version' => 6,
+            'updatedAt' => '2022-09-27T14:48:00.514Z',
         ]);
 
         $sender = new Address(
@@ -270,10 +271,9 @@ class PrintOneTest extends TestCase
         );
 
         $mergeVariables = [
-            'content' => '<h1>Hello World</h1>'
+            'content' => '<h1>Hello World</h1>',
         ];
 
         return [$templateFront, $templateBack, $mergeVariables, $sender, $recipient];
-
     }
 }
