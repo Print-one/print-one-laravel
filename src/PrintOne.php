@@ -65,7 +65,7 @@ class PrintOne
         return Order::fromArray($response->json());
     }
 
-    public function preview(Template $template, int $timeout = 30): ?string
+    public function preview(Template $template, int $timeout = 30): string
     {
         $response = $this->http->get("templates/preview/{$template->id}/{$template->version}");
 
