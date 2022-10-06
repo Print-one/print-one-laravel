@@ -12,6 +12,6 @@ class PrintOneServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('print-one')
-            ->hasConfigFile()
+            ->hasConfigFile();
     }
 }
