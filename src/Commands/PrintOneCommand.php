@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Nexxtbi\PrintOne\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class PrintOneCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'print-one';
 
     public $description = 'My command';
 
