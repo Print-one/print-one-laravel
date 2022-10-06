@@ -19,8 +19,7 @@ php artisan vendor:publish --tag="print-one-config"
 ## Usage example
 
 ```php
-$printOne = new Nexibi\PrintOne();
-$printOne->templates(); // Get available templates
+PrintOne::templates(); // Get available templates
 ```
 
 ## Testing

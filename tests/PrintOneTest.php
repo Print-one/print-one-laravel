@@ -12,7 +12,7 @@ use Nexibi\PrintOne\DTO\Template;
 use Nexibi\PrintOne\Exceptions\CouldNotFetchPreview;
 use Nexibi\PrintOne\Exceptions\CouldNotFetchTemplates;
 use Nexibi\PrintOne\Exceptions\CouldNotPlaceOrder;
-use Nexibi\PrintOne\PrintOne;
+use Nexibi\PrintOne\Facades\PrintOne;
 use Nexibi\PrintOne\Tests\TestCase;
 
 class PrintOneTest extends TestCase
@@ -75,9 +75,7 @@ class PrintOneTest extends TestCase
             'https://api.print.one/v1/templates?*' => Http::response($fakeResponse),
         ]);
 
-        $printOne = new PrintOne();
-
-        $templates = $printOne->templates(page: 1, size: 50);
+        $templates = PrintOne::templates(page: 1, size: 50);
 
         $this->assertInstanceOf(Collection::class, $templates);
         $this->assertContainsOnlyInstancesOf(Template::class, $templates);
@@ -99,12 +97,10 @@ class PrintOneTest extends TestCase
             'https://api.print.one/v1/templates?*' => Http::response(status: Response::HTTP_INTERNAL_SERVER_ERROR),
         ]);
 
-        $printOne = new PrintOne();
-
         $this->expectException(CouldNotFetchTemplates::class);
         $this->expectExceptionMessage('The Print.one API has an internal server error.');
 
-        $templates = $printOne->templates(page: 1, size: 50);
+        $templates = PrintOne::templates(page: 1, size: 50);
     }
 
     public function test_it_can_order_a_card(): void
@@ -160,11 +156,9 @@ class PrintOneTest extends TestCase
             'https://api.print.one/v1/orders' => Http::response($fakeResponse),
         ]);
 
-        $printOne = new PrintOne();
-
         [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
 
-        $order = $printOne->order(
+        $order = PrintOne::order(
             templateFront: $templateFront,
             templateBack: $templateBack,
             mergeVariables: $mergeVariables,
@@ -210,12 +204,10 @@ class PrintOneTest extends TestCase
 
         [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
 
-        $printOne = new PrintOne();
-
         $this->expectException(CouldNotPlaceOrder::class);
         $this->expectExceptionMessage("The order is invalid: 'tmpl_a8763477-2430-4034-880b-668604e61abb' has format: 'POSTCARD_A6' while you have provided: 'POSTCARD_A5'.");
 
-        $order = $printOne->order(
+        $order = PrintOne::order(
             templateFront: $templateFront,
             templateBack: $templateBack,
             mergeVariables: $mergeVariables,
@@ -232,12 +224,10 @@ class PrintOneTest extends TestCase
 
         [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
 
-        $printOne = new PrintOne();
-
         $this->expectException(CouldNotPlaceOrder::class);
         $this->expectExceptionMessage('The Print.one API has an internal server error.');
 
-        $order = $printOne->order(
+        $order = PrintOne::order(
             templateFront: $templateFront,
             templateBack: $templateBack,
             mergeVariables: $mergeVariables,
@@ -248,7 +238,7 @@ class PrintOneTest extends TestCase
 
     public function test_it_can_fetch_template_previews(): void
     {
-        $imageString = file_get_contents(__DIR__.'/images/card-preview.png');
+        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
 
         Http::fake([
             'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
@@ -258,8 +248,6 @@ class PrintOneTest extends TestCase
             ]),
         ]);
 
-        $printOne = new PrintOne();
-
         $template = Template::fromArray([
             'id' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
             'name' => 'voorkant',
@@ -268,7 +256,7 @@ class PrintOneTest extends TestCase
             'updatedAt' => '2022-09-27T14:48:00.514Z',
         ]);
 
-        $previewImage = $printOne->preview(template: $template);
+        $previewImage = PrintOne::preview(template: $template);
 
         $this->assertIsString($previewImage);
         $this->assertEquals($imageString, $previewImage);
@@ -278,14 +266,12 @@ class PrintOneTest extends TestCase
 
     public function test_it_throws_exception_when_fetching_preview_fails(): void
     {
-        $imageString = file_get_contents(__DIR__.'/images/card-preview.png');
+        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
 
         Http::fake([
             'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
             'https://api.print.one/v1/storage/template/preview/*' => Http::response(status: Response::HTTP_INTERNAL_SERVER_ERROR),
         ]);
-
-        $printOne = new PrintOne();
 
         $template = Template::fromArray([
             'id' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
@@ -298,7 +284,7 @@ class PrintOneTest extends TestCase
         $this->expectException(CouldNotFetchPreview::class);
         $this->expectExceptionMessage('Something went wrong while fetching the preview.');
 
-        $previewImage = $printOne->preview(template: $template, timeout: 0);
+        $previewImage = PrintOne::preview(template: $template, timeout: 0);
     }
 
     private function createOrder(): array
