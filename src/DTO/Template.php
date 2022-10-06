@@ -22,7 +22,7 @@ class Template
             id: $array['id'],
             name: $array['name'],
             format: $array['format'],
-            version: (int)$array['version'],
+            version: (int) $array['version'],
             updatedAt: Carbon::parse($array['updatedAt'], 'UTC'),
         );
     }
