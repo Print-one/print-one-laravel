@@ -23,7 +23,7 @@ class Address implements Arrayable
             'address' => $this->address,
             'postalCode' => $this->postalCode,
             'city' => $this->city,
-            'country' => $this->country
+            'country' => $this->country,
         ];
     }
 }

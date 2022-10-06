@@ -4,6 +4,7 @@ namespace Nexxtbi\PrintOne\Exceptions;
 
 use Exception;
 
-class CouldNotPlaceOrder extends Exception {
+class CouldNotPlaceOrder extends Exception
+{
     //
 }

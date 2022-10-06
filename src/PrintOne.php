@@ -53,7 +53,7 @@ class PrintOne
         }
 
         if ($response->serverError()) {
-            throw new CouldNotPlaceOrder("The Print.One API has an internal server error.");
+            throw new CouldNotPlaceOrder('The Print.One API has an internal server error.');
         }
 
         return Order::fromArray($response->json());
