@@ -2,12 +2,14 @@
 
 use Carbon\Carbon;
 use Illuminate\Http\Client\Request;
+use Illuminate\Http\File;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Nexxtbi\PrintOne\DTO\Address;
 use Nexxtbi\PrintOne\DTO\Order;
 use Nexxtbi\PrintOne\DTO\Template;
+use Nexxtbi\PrintOne\Exceptions\CouldNotFetchPreview;
 use Nexxtbi\PrintOne\Exceptions\CouldNotFetchTemplates;
 use Nexxtbi\PrintOne\Exceptions\CouldNotPlaceOrder;
 use Nexxtbi\PrintOne\PrintOne;
@@ -15,6 +17,13 @@ use Nexxtbi\PrintOne\Tests\TestCase;
 
 class PrintOneTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        Http::allowStrayRequests();
+    }
+
     public function test_it_can_be_initiated_with_config(): void
     {
         $printOne = new PrintOne(key: 'foo');
@@ -84,7 +93,8 @@ class PrintOneTest extends TestCase
         });
     }
 
-    public function test_api_issue_while_fetching_templates_throws_exception(){
+    public function test_api_issue_while_fetching_templates_throws_exception()
+    {
         Http::fake([
             'https://api.print.one/v1/templates?*' => Http::response(status: Response::HTTP_INTERNAL_SERVER_ERROR),
         ]);
@@ -234,6 +244,61 @@ class PrintOneTest extends TestCase
             sender: $sender,
             recipient: $recipient
         );
+    }
+
+    public function test_it_can_fetch_template_previews(): void
+    {
+        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
+
+        Http::fake([
+            'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
+            'https://api.print.one/v1/storage/template/preview/*' => Http::response($imageString, 200, [
+                'Content-type' => 'image/png',
+                'Content-Disposition' => 'attachment; filename=3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede.png',
+            ]),
+        ]);
+
+        $printOne = new PrintOne('fake');
+
+        $template = Template::fromArray([
+            'id' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
+            'name' => 'voorkant',
+            'format' => 'POSTCARD_A6',
+            'version' => 6,
+            'updatedAt' => '2022-09-27T14:48:00.514Z',
+        ]);
+
+        $previewImage = $printOne->preview(template: $template);
+
+        $this->assertIsString($previewImage);
+        $this->assertEquals($imageString, $previewImage);
+
+        Http::assertSent(fn (Request $request) => $request->url() === "https://api.print.one/v1/templates/preview/tmpl_a8763477-2430-4034-880b-668604e61abb/6");
+    }
+
+    public function test_it_throws_exception_when_fetching_preview_fails(): void
+    {
+        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
+
+        Http::fake([
+            'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
+            'https://api.print.one/v1/storage/template/preview/*' => Http::response(status: Response::HTTP_INTERNAL_SERVER_ERROR),
+        ]);
+
+        $printOne = new PrintOne('fake');
+
+        $template = Template::fromArray([
+            'id' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
+            'name' => 'voorkant',
+            'format' => 'POSTCARD_A6',
+            'version' => 6,
+            'updatedAt' => '2022-09-27T14:48:00.514Z',
+        ]);
+
+        $this->expectException(CouldNotFetchPreview::class);
+        $this->expectExceptionMessage('Something went wrong while fetching the preview.');
+
+        $previewImage = $printOne->preview(template: $template, timeout: 0);
     }
 
     private function createOrder(): array
