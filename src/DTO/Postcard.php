@@ -4,13 +4,7 @@ namespace Nexibi\PrintOne\DTO;
 
 class Postcard
 {
-    public string $format;
-
-    public function __construct(public Template $front, public Template $back)
+    public function __construct(public string $front, public string $back, public string $format)
     {
-        if ($this->front->format !== $this->back->format) {
-            throw new \InvalidArgumentException('Front and back template should be of the same format');
-        }
-        $this->format = $this->front->format;
     }
 }

@@ -50,8 +50,8 @@ class PrintOne implements PrintOneApi
             'recipient' => $recipient->toArray(),
             'format' => $postcard->format,
             'pages' => [
-                $postcard->front->id,
-                $postcard->back->id,
+                $postcard->front,
+                $postcard->back,
             ],
             'mergeVariables' => $mergeVariables,
         ]);

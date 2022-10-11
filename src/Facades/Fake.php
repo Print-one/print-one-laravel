@@ -53,7 +53,7 @@ class Fake implements PrintOneApi
         $order = $this->orders->where('postcard', $postcard)->where('from', $from)->where('to', $to)->first();
         Assert::assertNotNull(
             $order,
-            "Failed asserting postcard with front: '{$postcard->front->name} '(#{$postcard->front->id}) and back: '{$postcard->back->name}' (#{$postcard->back->id}) was ordered from {$from->name} to {$to->name}"
+            "Failed asserting postcard with front: '{$postcard->front}' and back: '{$postcard->back}' was ordered from {$from->name} to {$to->name}"
         );
     }
 
