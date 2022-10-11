@@ -37,13 +37,14 @@ class Fake implements PrintOneApi
         $this->orders->push(['postcard' => $postcard, 'from' => $sender, 'to' => $recipient]);
 
         return new Order(
-            id: Str::uuid(), status: "status", createdAt: now(), isBillable: false
+            id: Str::uuid(), status: 'status', createdAt: now(), isBillable: false
         );
     }
 
     public function preview(Template $template, int $timeout = 30): string
     {
         $this->viewed->push($template);
+
         return '';
     }
 

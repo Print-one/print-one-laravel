@@ -40,7 +40,7 @@ class PrintOne implements PrintOneApi
 
         return $response
             ->collect('data')
-            ->map(fn($data) => Template::fromArray($data));
+            ->map(fn ($data) => Template::fromArray($data));
     }
 
     public function order(Postcard $postcard, array $mergeVariables, Address $sender, Address $recipient): Order
@@ -93,7 +93,7 @@ class PrintOne implements PrintOneApi
             $waited += 5;
         }
 
-        if (!$response || $response->failed()) {
+        if (! $response || $response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 

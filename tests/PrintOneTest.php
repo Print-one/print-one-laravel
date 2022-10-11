@@ -92,7 +92,7 @@ class PrintOneTest extends TestCase
 
         Http::assertSent(function (Request $request) {
             return $request->hasHeader('X-Api-Key', 'foo') && $request->url(
-                ) == 'https://api.print.one/v1/templates?page=1&size=50';
+            ) == 'https://api.print.one/v1/templates?page=1&size=50';
         });
     }
 
@@ -172,7 +172,7 @@ class PrintOneTest extends TestCase
         );
 
         Http::assertSent(
-            fn(Request $request) => $request->url() === 'https://api.print.one/v1/orders' &&
+            fn (Request $request) => $request->url() === 'https://api.print.one/v1/orders' &&
                 $request['pages'][0] === $templateFront->id &&
                 $request['sender'] === $sender->toArray() &&
                 $request['recipient'] === $recipient->toArray() &&
@@ -245,7 +245,7 @@ class PrintOneTest extends TestCase
 
     public function test_it_can_fetch_template_previews(): void
     {
-        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
+        $imageString = file_get_contents(__DIR__.'/images/card-preview.png');
 
         Http::fake([
             'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
@@ -269,8 +269,8 @@ class PrintOneTest extends TestCase
         $this->assertEquals($imageString, $previewImage);
 
         Http::assertSent(
-            fn(Request $request) => $request->url(
-                ) === 'https://api.print.one/v1/templates/preview/tmpl_a8763477-2430-4034-880b-668604e61abb/6'
+            fn (Request $request) => $request->url(
+            ) === 'https://api.print.one/v1/templates/preview/tmpl_a8763477-2430-4034-880b-668604e61abb/6'
         );
     }
 
@@ -343,7 +343,7 @@ class PrintOneTest extends TestCase
         PrintOne::fake(
             $template = new Template(
                 id: Str::uuid(),
-                name: "Test Template",
+                name: 'Test Template',
                 format: Format::A5,
                 version: 1,
                 updatedAt: now()
