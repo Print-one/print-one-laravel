@@ -5,14 +5,16 @@ namespace Nexibi\PrintOne;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Nexibi\PrintOne\Contracts\PrintOneApi;
 use Nexibi\PrintOne\DTO\Address;
 use Nexibi\PrintOne\DTO\Order;
+use Nexibi\PrintOne\DTO\Postcard;
 use Nexibi\PrintOne\DTO\Template;
 use Nexibi\PrintOne\Exceptions\CouldNotFetchPreview;
 use Nexibi\PrintOne\Exceptions\CouldNotFetchTemplates;
 use Nexibi\PrintOne\Exceptions\CouldNotPlaceOrder;
 
-class PrintOne
+class PrintOne implements PrintOneApi
 {
     private string $baseUrl = 'https://api.print.one/v1/';
 
@@ -31,23 +33,25 @@ class PrintOne
         $response = $this->http->get('templates', ['page' => $page, 'size' => $size]);
 
         if ($response->serverError()) {
-            throw new CouldNotFetchTemplates('Something went wrong while fetching the templates from the Print.one API.');
+            throw new CouldNotFetchTemplates(
+                'Something went wrong while fetching the templates from the Print.one API.'
+            );
         }
 
         return $response
             ->collect('data')
-            ->map(fn ($data) => Template::fromArray($data));
+            ->map(fn($data) => Template::fromArray($data));
     }
 
-    public function order(Template $templateFront, Template $templateBack, array $mergeVariables, Address $sender, Address $recipient): Order
+    public function order(Postcard $postcard, array $mergeVariables, Address $sender, Address $recipient): Order
     {
         $response = $this->http->post('orders', [
             'sender' => $sender->toArray(),
             'recipient' => $recipient->toArray(),
-            'format' => $templateFront->format,
+            'format' => $postcard->format,
             'pages' => [
-                $templateFront->id,
-                $templateBack->id,
+                $postcard->front->id,
+                $postcard->back->id,
             ],
             'mergeVariables' => $mergeVariables,
         ]);
@@ -89,7 +93,7 @@ class PrintOne
             $waited += 5;
         }
 
-        if (! $response || $response->failed()) {
+        if (!$response || $response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 
