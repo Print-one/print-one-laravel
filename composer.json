@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.0",
         "guzzlehttp/guzzle": "^7.5",
         "illuminate/contracts": "^8.0",
         "spatie/laravel-package-tools": "^1.12.0"
@@ -28,8 +28,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Nexibi\\PrintOne\\": "src",
-            "Nexibi\\PrintOne\\Database\\Factories\\": "database/factories"
+            "Nexibi\\PrintOne\\": "src"
         }
     },
     "autoload-dev": {
