@@ -1,14 +1,19 @@
 <?php
 
+namespace Nexibi\PrintOne\Tests;
+
 use Carbon\Carbon;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Nexibi\PrintOne\DTO\Address;
 use Nexibi\PrintOne\DTO\Order;
+use Nexibi\PrintOne\DTO\Postcard;
 use Nexibi\PrintOne\DTO\Template;
+use Nexibi\PrintOne\Enums\Format;
 use Nexibi\PrintOne\Exceptions\CouldNotFetchPreview;
 use Nexibi\PrintOne\Exceptions\CouldNotFetchTemplates;
 use Nexibi\PrintOne\Exceptions\CouldNotPlaceOrder;
@@ -31,7 +36,7 @@ class PrintOneTest extends TestCase
         $this->assertInstanceOf(PrintOne::class, $printOne);
     }
 
-    public function test_it_can_retreive_templates(): void
+    public function test_it_can_retrieve_templates(): void
     {
         $fakeResponse = [
             'data' => [
@@ -87,7 +92,8 @@ class PrintOneTest extends TestCase
         $this->assertTrue(Carbon::parse($fakeResponse['data'][0]['updatedAt'], 'UTC')->eq($templates[0]->updatedAt));
 
         Http::assertSent(function (Request $request) {
-            return $request->hasHeader('X-Api-Key', 'foo') && $request->url() == 'https://api.print.one/v1/templates?page=1&size=50';
+            return $request->hasHeader('X-Api-Key', 'foo') && $request->url(
+                ) == 'https://api.print.one/v1/templates?page=1&size=50';
         });
     }
 
@@ -158,16 +164,16 @@ class PrintOneTest extends TestCase
 
         [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
 
+        $postcard = new Postcard(front: $templateFront, back: $templateBack);
         $order = PrintOne::order(
-            templateFront: $templateFront,
-            templateBack: $templateBack,
+            $postcard,
             mergeVariables: $mergeVariables,
             sender: $sender,
             recipient: $recipient
         );
 
         Http::assertSent(
-            fn (Request $request) => $request->url() === 'https://api.print.one/v1/orders' &&
+            fn(Request $request) => $request->url() === 'https://api.print.one/v1/orders' &&
                 $request['pages'][0] === $templateFront->id &&
                 $request['sender'] === $sender->toArray() &&
                 $request['recipient'] === $recipient->toArray() &&
@@ -205,11 +211,13 @@ class PrintOneTest extends TestCase
         [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
 
         $this->expectException(CouldNotPlaceOrder::class);
-        $this->expectExceptionMessage("The order is invalid: 'tmpl_a8763477-2430-4034-880b-668604e61abb' has format: 'POSTCARD_A6' while you have provided: 'POSTCARD_A5'.");
+        $this->expectExceptionMessage(
+            "The order is invalid: 'tmpl_a8763477-2430-4034-880b-668604e61abb' has format: 'POSTCARD_A6' while you have provided: 'POSTCARD_A5'."
+        );
 
+        $postcard = new Postcard(front: $templateFront, back: $templateBack);
         PrintOne::order(
-            templateFront: $templateFront,
-            templateBack: $templateBack,
+            postcard: $postcard,
             mergeVariables: $mergeVariables,
             sender: $sender,
             recipient: $recipient
@@ -227,9 +235,9 @@ class PrintOneTest extends TestCase
         $this->expectException(CouldNotPlaceOrder::class);
         $this->expectExceptionMessage('Something went wrong while placing the order in the Print.one API.');
 
+        $postcard = new Postcard(front: $templateFront, back: $templateBack);
         PrintOne::order(
-            templateFront: $templateFront,
-            templateBack: $templateBack,
+            postcard: $postcard,
             mergeVariables: $mergeVariables,
             sender: $sender,
             recipient: $recipient
@@ -238,7 +246,7 @@ class PrintOneTest extends TestCase
 
     public function test_it_can_fetch_template_previews(): void
     {
-        $imageString = file_get_contents(__DIR__.'/images/card-preview.png');
+        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
 
         Http::fake([
             'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
@@ -261,14 +269,19 @@ class PrintOneTest extends TestCase
         $this->assertIsString($previewImage);
         $this->assertEquals($imageString, $previewImage);
 
-        Http::assertSent(fn (Request $request) => $request->url() === 'https://api.print.one/v1/templates/preview/tmpl_a8763477-2430-4034-880b-668604e61abb/6');
+        Http::assertSent(
+            fn(Request $request) => $request->url(
+                ) === 'https://api.print.one/v1/templates/preview/tmpl_a8763477-2430-4034-880b-668604e61abb/6'
+        );
     }
 
     public function test_it_throws_exception_when_fetching_preview_fails(): void
     {
         Http::fake([
             'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
-            'https://api.print.one/v1/storage/template/preview/*' => Http::response(status: Response::HTTP_INTERNAL_SERVER_ERROR),
+            'https://api.print.one/v1/storage/template/preview/*' => Http::response(
+                status: Response::HTTP_INTERNAL_SERVER_ERROR
+            ),
         ]);
 
         $template = Template::fromArray([
@@ -324,5 +337,37 @@ class PrintOneTest extends TestCase
         ];
 
         return [$templateFront, $templateBack, $mergeVariables, $sender, $recipient];
+    }
+
+    public function test_fake_client(): void
+    {
+        PrintOne::fake(
+            $template = new Template(
+                id: Str::uuid(),
+                name: "Test Template",
+                format: Format::A5,
+                version: 1,
+                updatedAt: now()
+            )
+        );
+
+        [$templateFront, $templateBack, $mergeVariables, $sender, $recipient] = $this->createOrder();
+
+        PrintOne::order(
+            $postcard = new Postcard(
+                front: $templateFront, back: $templateBack
+            ),
+            mergeVariables: $mergeVariables,
+            sender: $sender,
+            recipient: $recipient
+        );
+        PrintOne::assertOrdered($postcard, from: $sender, to: $recipient);
+
+        PrintOne::preview($templateFront);
+        PrintOne::assertViewed($templateFront);
+
+        $templates = PrintOne::templates(1, 50);
+        $this->assertInstanceOf(Collection::class, $templates);
+        $this->assertSame($template, $templates[0]);
     }
 }
