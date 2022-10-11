@@ -18,7 +18,6 @@ use Nexibi\PrintOne\Exceptions\CouldNotFetchPreview;
 use Nexibi\PrintOne\Exceptions\CouldNotFetchTemplates;
 use Nexibi\PrintOne\Exceptions\CouldNotPlaceOrder;
 use Nexibi\PrintOne\Facades\PrintOne;
-use Nexibi\PrintOne\Tests\TestCase;
 
 class PrintOneTest extends TestCase
 {
