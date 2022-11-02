@@ -40,7 +40,7 @@ class PrintOne implements PrintOneApi
 
         return $response
             ->collect('data')
-            ->map(fn ($data) => Template::fromArray($data));
+            ->map(fn($data) => Template::fromArray($data));
     }
 
     public function order(Postcard $postcard, array $mergeVariables, Address $sender, Address $recipient): Order
@@ -69,6 +69,9 @@ class PrintOne implements PrintOneApi
         return Order::fromArray($response->json());
     }
 
+    /**
+     * @throws CouldNotFetchPreview
+     */
     public function preview(Template $template, int $timeout = 30): string
     {
         $response = $this->http->get("templates/preview/{$template->id}/{$template->version}");
@@ -79,6 +82,33 @@ class PrintOne implements PrintOneApi
 
         $previewId = $response->body();
 
+        return $this->fetchPreview($previewId, $timeout);
+    }
+
+    /**
+     * @throws CouldNotFetchPreview
+     */
+    public function previewOrder(Order $order, int $timeout = 30): string
+    {
+        $response = $this->http->get("/storage/order/preview/{$order->id}");
+
+        if ($response->failed()) {
+            throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
+        }
+
+        $previewId = $response->body();
+
+        return $this->fetchPreview($previewId, $timeout);
+    }
+
+    /**
+     * @param string $previewId
+     * @param int $timeout
+     * @return string
+     * @throws CouldNotFetchPreview
+     */
+    private function fetchPreview(string $previewId, int $timeout): string
+    {
         $response = null;
         $waited = 0;
 
@@ -93,7 +123,7 @@ class PrintOne implements PrintOneApi
             $waited += 5;
         }
 
-        if (! $response || $response->failed()) {
+        if (!$response || $response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 
