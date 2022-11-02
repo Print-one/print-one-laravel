@@ -82,33 +82,6 @@ class PrintOne implements PrintOneApi
 
         $previewId = $response->body();
 
-        return $this->fetchPreview($previewId, $timeout);
-    }
-
-    /**
-     * @throws CouldNotFetchPreview
-     */
-    public function previewOrder(Order $order, int $timeout = 30): string
-    {
-        $response = $this->http->get("storage/order/preview/{$order->id}");
-
-        if ($response->failed()) {
-            throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
-        }
-
-        $previewId = $response->body();
-
-        return $this->fetchPreview($previewId, $timeout);
-    }
-
-    /**
-     * @param string $previewId
-     * @param int $timeout
-     * @return string
-     * @throws CouldNotFetchPreview
-     */
-    private function fetchPreview(string $previewId, int $timeout): string
-    {
         $response = null;
         $waited = 0;
 
@@ -124,6 +97,20 @@ class PrintOne implements PrintOneApi
         }
 
         if (!$response || $response->failed()) {
+            throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
+        }
+
+        return $response->body();
+    }
+
+    /**
+     * @throws CouldNotFetchPreview
+     */
+    public function previewOrder(Order $order): string
+    {
+        $response = $this->http->get("storage/order/preview/{$order->id}");
+
+        if ($response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 

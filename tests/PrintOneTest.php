@@ -332,19 +332,14 @@ class PrintOneTest extends TestCase
 
     public function test_it_can_fetch_an_order_preview(): void
     {
-        $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
+        $contents = file_get_contents(__DIR__ . '/pdfs/order-preview.pdf');
 
         Http::fake([
-            'https://api.print.one/v1/storage/order/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
-            'https://api.print.one/v1/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede' => Http::response(
-                $imageString,
-                200,
-                [
-                    'Content-type' => 'image/png',
-                    'Content-Disposition' => 'attachment; filename=3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede.png',
-                ]
-            ),
-        ]);
+            'https://api.print.one/v1/storage/order/preview/*' => Http::response($contents, 200, [
+                'Content-type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename=ord_3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede.pdf',
+            ])]
+        );
 
         PrintOne::previewOrder(
             order: $order = new Order(
@@ -358,10 +353,6 @@ class PrintOneTest extends TestCase
         Http::assertSent(
             fn(Request $request) => $request->url(
                 ) === "https://api.print.one/v1/storage/order/preview/{$order->id}"
-        );
-        Http::assertSent(
-            fn(Request $request) => $request->url(
-                ) === "https://api.print.one/v1/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede"
         );
     }
 
