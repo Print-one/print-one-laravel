@@ -405,6 +405,4 @@ class PrintOneTest extends TestCase
 
         return [$templateFront, $templateBack, $mergeVariables, $sender, $recipient];
     }
-
-
 }
