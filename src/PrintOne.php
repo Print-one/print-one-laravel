@@ -90,7 +90,7 @@ class PrintOne implements PrintOneApi
      */
     public function previewOrder(Order $order, int $timeout = 30): string
     {
-        $response = $this->http->get("/storage/order/preview/{$order->id}");
+        $response = $this->http->get("storage/order/preview/{$order->id}");
 
         if ($response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
