@@ -19,5 +19,5 @@ interface PrintOneApi
         Address $recipient
     ): Order;
 
-    public function preview(Template $template, int $timeout = 30): string;
+    public function preview(Template $template, int $retryTimes = 5): string;
 }

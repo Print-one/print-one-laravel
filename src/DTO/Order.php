@@ -3,8 +3,9 @@
 namespace Nexibi\PrintOne\DTO;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Support\Arrayable;
 
-class Order
+class Order implements Arrayable
 {
     public function __construct(
         public string $id,
@@ -23,5 +24,16 @@ class Order
             createdAt: Carbon::parse($data['createdAt']),
             isBillable: $data['isBillable']
         );
+    }
+
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'status' => $this->status,
+            'createdAt' => $this->createdAt->toDateTimeString(),
+            'isBillable' => $this->isBillable
+        ];
     }
 }

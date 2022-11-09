@@ -2,15 +2,31 @@
 
 namespace Nexibi\PrintOne\DTO;
 
-class Postcard
-{
-    public string $format;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 
-    public function __construct(public Template $front, public Template $back)
+class Postcard implements Arrayable, Jsonable
+{
+    public function __construct(public string $front, public string $back, public string $format) {}
+
+    public static function fromArray(array $data): self
     {
-        if ($this->front->format !== $this->back->format) {
-            throw new \InvalidArgumentException('Front and back template should be of the same format');
-        }
-        $this->format = $this->front->format;
+        return new self(
+            $data['front'], $data['back'], $data['format']
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'front' => $this->front,
+            'back' => $this->back,
+            'format' => $this->format,
+        ];
+    }
+
+    public function toJson($options = 0): string
+    {
+        return json_encode($this->toArray(), $options);
     }
 }

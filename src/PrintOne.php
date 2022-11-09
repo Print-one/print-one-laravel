@@ -40,7 +40,7 @@ class PrintOne implements PrintOneApi
 
         return $response
             ->collect('data')
-            ->map(fn ($data) => Template::fromArray($data));
+            ->map(fn($data) => Template::fromArray($data));
     }
 
     public function order(Postcard $postcard, array $mergeVariables, Address $sender, Address $recipient): Order
@@ -49,9 +49,9 @@ class PrintOne implements PrintOneApi
             'sender' => $sender->toArray(),
             'recipient' => $recipient->toArray(),
             'format' => $postcard->format,
-            'pages' => [
-                $postcard->front->id,
-                $postcard->back->id,
+            'pages' => (object)[
+                "1" => $postcard->front,
+                "2" => $postcard->back,
             ],
             'mergeVariables' => $mergeVariables,
         ]);
@@ -69,31 +69,38 @@ class PrintOne implements PrintOneApi
         return Order::fromArray($response->json());
     }
 
-    public function preview(Template $template, int $timeout = 30): string
+    /**
+     * @throws CouldNotFetchPreview
+     */
+    public function preview(Template $template, int $retryTimes = 5): string
     {
         $response = $this->http->get("templates/preview/{$template->id}/{$template->version}");
-
         if ($response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 
-        $previewId = $response->body();
+        $previewUrl = $response->json('url');
 
-        $response = null;
-        $waited = 0;
+        $response = rescue(
+            fn() => $this->http->retry($retryTimes, 1000)->get($previewUrl),
+            fn($error) => $error->response
+        );
 
-        while ($waited < $timeout) {
-            $response = $this->http->get("storage/template/preview/{$previewId}");
-
-            if ($response->successful()) {
-                break;
-            }
-
-            sleep(5);
-            $waited += 5;
+        if (!$response || $response->failed()) {
+            throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 
-        if (! $response || $response->failed()) {
+        return $response->body();
+    }
+
+    /**
+     * @throws CouldNotFetchPreview
+     */
+    public function previewOrder(Order $order): string
+    {
+        $response = $this->http->get("storage/order/preview/{$order->id}");
+
+        if ($response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 
