@@ -49,9 +49,9 @@ class PrintOne implements PrintOneApi
             'sender' => $sender->toArray(),
             'recipient' => $recipient->toArray(),
             'format' => $postcard->format,
-            'pages' => [
-                $postcard->front,
-                $postcard->back,
+            'pages' => (object)[
+                "1" => $postcard->front,
+                "2" => $postcard->back,
             ],
             'mergeVariables' => $mergeVariables,
         ]);
@@ -72,29 +72,19 @@ class PrintOne implements PrintOneApi
     /**
      * @throws CouldNotFetchPreview
      */
-    public function preview(Template $template, int $timeout = 30): string
+    public function preview(Template $template, int $retryTimes = 5): string
     {
         $response = $this->http->get("templates/preview/{$template->id}/{$template->version}");
-
         if ($response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 
-        $previewId = $response->body();
+        $previewUrl = $response->json('url');
 
-        $response = null;
-        $waited = 0;
-
-        while ($waited < $timeout) {
-            $response = $this->http->get("storage/template/preview/{$previewId}");
-
-            if ($response->successful()) {
-                break;
-            }
-
-            sleep(5);
-            $waited += 5;
-        }
+        $response = rescue(
+            fn() => $this->http->retry($retryTimes, 1000)->get($previewUrl),
+            fn($error) => $error->response
+        );
 
         if (!$response || $response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');

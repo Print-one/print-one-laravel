@@ -174,7 +174,7 @@ class PrintOneTest extends TestCase
 
         Http::assertSent(
             fn(Request $request) => $request->url() === 'https://api.print.one/v1/orders' &&
-                $request['pages'][0] === $templateFront->id &&
+                $request['pages'] == (object)["1" => $templateFront->id, "2" => $templateBack->id] &&
                 $request['sender'] === $sender->toArray() &&
                 $request['recipient'] === $recipient->toArray() &&
                 $request['format'] === $templateFront->format
@@ -249,8 +249,10 @@ class PrintOneTest extends TestCase
         $imageString = file_get_contents(__DIR__ . '/images/card-preview.png');
 
         Http::fake([
-            'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
-            'https://api.print.one/v1/storage/template/preview/*' => Http::response($imageString, 200, [
+            'https://api.print.one/v1/templates/preview/*' => Http::response(
+                ['url' => 'https://api.print.one/v1/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede']
+            ),
+            'https://api.print.one/v1/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede' => Http::response($imageString, 200, [
                 'Content-type' => 'image/png',
                 'Content-Disposition' => 'attachment; filename=3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede.png',
             ]),
@@ -278,8 +280,8 @@ class PrintOneTest extends TestCase
     public function test_it_throws_exception_when_fetching_preview_fails(): void
     {
         Http::fake([
-            'https://api.print.one/v1/templates/preview/*' => Http::response('3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede'),
-            'https://api.print.one/v1/storage/template/preview/*' => Http::response(
+            'https://api.print.one/v1/templates/preview/*' => Http::response(['url' => 'https://api.print.one/v1/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede' ]),
+            'https://api.print.one/v1/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede' => Http::response(
                 status: Response::HTTP_INTERNAL_SERVER_ERROR
             ),
         ]);
@@ -295,7 +297,7 @@ class PrintOneTest extends TestCase
         $this->expectException(CouldNotFetchPreview::class);
         $this->expectExceptionMessage('Something went wrong while fetching the preview from the Print.one API.');
 
-        PrintOne::preview(template: $template, timeout: 0);
+        PrintOne::preview(template: $template, retryTimes: 0);
     }
 
     public function test_fake_client(): void
@@ -335,10 +337,11 @@ class PrintOneTest extends TestCase
         $contents = file_get_contents(__DIR__ . '/pdfs/order-preview.pdf');
 
         Http::fake([
-            'https://api.print.one/v1/storage/order/preview/*' => Http::response($contents, 200, [
-                'Content-type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename=ord_3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede.pdf',
-            ])]
+                'https://api.print.one/v1/storage/order/preview/*' => Http::response($contents, 200, [
+                    'Content-type' => 'application/pdf',
+                    'Content-Disposition' => 'attachment; filename=ord_3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede.pdf',
+                ])
+            ]
         );
 
         PrintOne::previewOrder(
@@ -351,8 +354,7 @@ class PrintOneTest extends TestCase
         );
 
         Http::assertSent(
-            fn(Request $request) => $request->url(
-                ) === "https://api.print.one/v1/storage/order/preview/{$order->id}"
+            fn(Request $request) => $request->url() === "https://api.print.one/v1/storage/order/preview/{$order->id}"
         );
     }
 
