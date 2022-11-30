@@ -92,7 +92,7 @@ class PrintOneTest extends TestCase
 
         Http::assertSent(function (Request $request) {
             return $request->hasHeader('X-Api-Key', 'foo') && $request->url(
-                ) == 'https://api.print.one/v1/templates?page=1&size=50';
+                ) === 'https://api.print.one/v1/templates?page=1&size=50';
         });
     }
 
