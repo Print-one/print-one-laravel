@@ -66,4 +66,12 @@ class Fake implements PrintOneApi
             "Failed asserting template '{$template->name}'(#{$template->id}) was viewed"
         );
     }
+
+    public function assertNothingOrdered(): void
+    {
+        Assert::assertEmpty(
+            $this->orders,
+            "Failed asserting that there was nothing orderded. Found orders: {{$this->orders->toJson(JSON_PRETTY_PRINT)}}"
+        );
+    }
 }
