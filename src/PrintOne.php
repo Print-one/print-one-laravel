@@ -74,7 +74,7 @@ class PrintOne implements PrintOneApi
      */
     public function preview(Template $template, int $retryTimes = 5): string
     {
-        $response = $this->http->get("templates/preview/{$template->id}/{$template->version}");
+        $response = $this->http->post("templates/preview/{$template->id}/{$template->version}");
         if ($response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
