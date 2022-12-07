@@ -53,7 +53,7 @@ class PrintOne implements PrintOneApi
                 "1" => $postcard->front,
                 "2" => $postcard->back,
             ],
-            'mergeVariables' => $mergeVariables,
+            'mergeVariables' => (object)$mergeVariables,
         ]);
 
         if ($response->clientError()) {
