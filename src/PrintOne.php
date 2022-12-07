@@ -45,7 +45,7 @@ class PrintOne implements PrintOneApi
 
     public function order(Postcard $postcard, array $mergeVariables, Address $sender, Address $recipient): Order
     {
-        $response = $this->http->post('orders', [
+        $data = [
             'sender' => $sender->toArray(),
             'recipient' => $recipient->toArray(),
             'format' => $postcard->format,
@@ -53,8 +53,13 @@ class PrintOne implements PrintOneApi
                 "1" => $postcard->front,
                 "2" => $postcard->back,
             ],
-            'mergeVariables' => (object)$mergeVariables,
-        ]);
+        ];
+
+        if (!empty($mergeVariables)) {
+            $data['mergeVariables'] = $mergeVariables;
+        }
+        
+        $response = $this->http->post('orders', $data);
 
         if ($response->clientError()) {
             $firstError = $response->json('errors.0.message');
