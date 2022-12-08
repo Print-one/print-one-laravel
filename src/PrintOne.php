@@ -77,9 +77,9 @@ class PrintOne implements PrintOneApi
     /**
      * @throws CouldNotFetchOrder
      */
-    public function getOrder(string $externId): Order
+    public function getOrder(string $orderId): Order
     {
-        $response = $this->http->get("orders/{$externId}");
+        $response = $this->http->get("orders/{$orderId}");
         if ($response->failed()) {
             throw new CouldNotFetchOrder('Something went wrong while fetching the order from the Print.one API.');
         }
