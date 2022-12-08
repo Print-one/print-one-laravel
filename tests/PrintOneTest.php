@@ -358,6 +358,69 @@ class PrintOneTest extends TestCase
         );
     }
 
+    public function test_it_can_fetch_an_order(): void
+    {
+        $fakeResponse = [
+            'id' => 'ord_25a36175-52c8-4c81-96fc-1d829af9ffee',
+            'sender' => [
+                'city' => 'string',
+                'name' => 'string',
+                'address' => 'string',
+                'country' => 'string',
+                'postalCode' => 'string',
+            ],
+            'recipient' => [
+                'city' => 'string',
+                'name' => 'string',
+                'address' => 'string',
+                'country' => 'string',
+                'postalCode' => 'string',
+            ],
+            'mergeVariables' => [
+                'lastName' => 'Duck',
+                'firstName' => 'Donald',
+            ],
+            'billingId' => 'string',
+            'isBillable' => false,
+            'status' => 'order_created',
+            'format' => 'POSTCARD_A6',
+            'customerId' => '',
+            'createdAt' => '2022-10-06T08:49:40.368Z',
+            'updatedAt' => '2022-10-06T08:49:40.368Z',
+            'pages' => [
+                [
+                    'id' => '90238dbd-623e-472a-892d-0ae7dccd5d57',
+                    'templateId' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
+                    'order' => 1,
+                    'cardId' => 'ord_25a36175-52c8-4c81-96fc-1d829af9ffee',
+                    'createdAt' => '2022-10-06T08:49:40.368Z',
+                    'updatedAt' => '2022-10-06T08:49:40.368Z',
+                ],
+                [
+                    'id' => 'be52a381-8be8-4ccc-8c98-f73a53cf0d3b',
+                    'templateId' => 'tmpl_a8763477-2430-4034-880b-668604e61abb',
+                    'order' => 2,
+                    'cardId' => 'ord_25a36175-52c8-4c81-96fc-1d829af9ffee',
+                    'createdAt' => '2022-10-06T08:49:40.368Z',
+                    'updatedAt' => '2022-10-06T08:49:40.368Z',
+                ],
+            ],
+        ];
+
+        Http::fake([
+            'https://api.print.one/v1/orders/ord_25a36175-52c8-4c81-96fc-1d829af9ffee' => Http::response($fakeResponse),
+        ]);
+
+        $order = PrintOne::getOrder('ord_25a36175-52c8-4c81-96fc-1d829af9ffee');
+
+        $this->assertInstanceOf(Order::class, $order);
+
+        $this->assertEquals($fakeResponse['id'], $order->id);
+        $this->assertEquals('order_created', $order->status);
+        $this->assertTrue(Carbon::parse($fakeResponse['createdAt'], 'UTC')->eq($order->createdAt));
+        $this->assertFalse($order->isBillable);
+    }
+
     private function createOrder(): array
     {
         $templateFront = Template::fromArray([

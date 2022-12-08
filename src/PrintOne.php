@@ -73,7 +73,20 @@ class PrintOne implements PrintOneApi
 
         return Order::fromArray($response->json());
     }
-
+    
+    /**
+     * @throws CouldNotFetchOrder
+     */
+    public function getOrder(string $orderId): Order
+    {
+        $response = $this->http->get("orders/{$orderId}");
+        if ($response->failed()) {
+            throw new CouldNotFetchOrder('Something went wrong while fetching the order from the Print.one API.');
+        }
+        
+        return Order::fromArray($response->json());
+    }
+    
     /**
      * @throws CouldNotFetchPreview
      */
