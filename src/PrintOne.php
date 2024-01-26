@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Http;
 use Nexibi\PrintOne\Contracts\PrintOneApi;
 use Nexibi\PrintOne\DTO\Address;
 use Nexibi\PrintOne\DTO\Order;
-use Nexibi\PrintOne\DTO\Postcard;
 use Nexibi\PrintOne\DTO\Template;
 use Nexibi\PrintOne\Exceptions\CouldNotFetchPreview;
 use Nexibi\PrintOne\Exceptions\CouldNotFetchTemplates;
@@ -16,7 +15,7 @@ use Nexibi\PrintOne\Exceptions\CouldNotPlaceOrder;
 
 class PrintOne implements PrintOneApi
 {
-    private string $baseUrl = 'https://api.print.one/v1/';
+    private string $baseUrl = 'https://api.print.one/v2/';
 
     private PendingRequest $http;
 
@@ -40,25 +39,22 @@ class PrintOne implements PrintOneApi
 
         return $response
             ->collect('data')
-            ->map(fn($data) => Template::fromArray($data));
+            ->map(fn ($data) => Template::fromArray($data));
     }
 
-    public function order(Postcard $postcard, array $mergeVariables, Address $sender, Address $recipient): Order
+    public function order(string $templateId, string $finish, array $mergeVariables, Address $sender, Address $recipient): Order
     {
         $data = [
             'sender' => $sender->toArray(),
             'recipient' => $recipient->toArray(),
-            'format' => $postcard->format,
-            'pages' => (object)[
-                "1" => $postcard->front,
-                "2" => $postcard->back,
-            ],
+            'templateId' => $templateId,
+            'finish' => $finish,
         ];
 
-        if (!empty($mergeVariables)) {
+        if (! empty($mergeVariables)) {
             $data['mergeVariables'] = $mergeVariables;
         }
-        
+
         $response = $this->http->post('orders', $data);
 
         if ($response->clientError()) {
@@ -73,7 +69,7 @@ class PrintOne implements PrintOneApi
 
         return Order::fromArray($response->json());
     }
-    
+
     /**
      * @throws CouldNotFetchOrder
      */
@@ -83,10 +79,10 @@ class PrintOne implements PrintOneApi
         if ($response->failed()) {
             throw new CouldNotFetchOrder('Something went wrong while fetching the order from the Print.one API.');
         }
-        
+
         return Order::fromArray($response->json());
     }
-    
+
     /**
      * @throws CouldNotFetchPreview
      */
@@ -100,11 +96,11 @@ class PrintOne implements PrintOneApi
         $previewUrl = $response->json('url');
 
         $response = rescue(
-            fn() => $this->http->retry($retryTimes, 1000)->get($previewUrl),
-            fn($error) => $error->response
+            fn () => $this->http->retry($retryTimes, 1000)->get($previewUrl),
+            fn ($error) => $error->response
         );
 
-        if (!$response || $response->failed()) {
+        if (! $response || $response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 

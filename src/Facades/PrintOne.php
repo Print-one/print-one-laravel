@@ -8,6 +8,7 @@ use Nexibi\PrintOne\DTO\Template;
 
 /**
  * @see \Nexibi\PrintOne\PrintOne
+ *
  * @mixin \Nexibi\PrintOne\PrintOne
  */
 class PrintOne extends Facade
