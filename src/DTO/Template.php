@@ -3,13 +3,14 @@
 namespace Nexibi\PrintOne\DTO;
 
 use Carbon\Carbon;
+use Nexibi\PrintOne\Enums\Format;
 
 class Template
 {
     public function __construct(
         public string $id,
         public string $name,
-        public string $format,
+        public ?Format $format,
         public int $version,
         public Carbon $updatedAt
     ) {
@@ -18,10 +19,12 @@ class Template
 
     public static function fromArray(array $array): self
     {
+        $format = (is_string($array['format'])) ? Format::tryFrom($array['format']) : $array['format'];
+
         return new self(
             id: $array['id'],
             name: $array['name'],
-            format: $array['format'],
+            format: $format,
             version: (int) $array['version'],
             updatedAt: Carbon::parse($array['updatedAt'], 'UTC'),
         );

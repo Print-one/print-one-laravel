@@ -4,6 +4,7 @@ namespace Nexibi\PrintOne\DTO;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
+use Nexibi\PrintOne\Enums\Finish;
 
 class Order implements Arrayable
 {
@@ -11,7 +12,7 @@ class Order implements Arrayable
         public string $id,
         public string $status,
         public string $templateId,
-        public string $finish,
+        public ?Finish $finish,
         public Carbon $createdAt,
         public bool $isBillable,
     ) {
@@ -24,7 +25,7 @@ class Order implements Arrayable
             id: $data['id'],
             status: $data['status'],
             templateId: $data['templateId'],
-            finish: $data['finish'],
+            finish: Finish::tryFrom($data['finish']),
             createdAt: Carbon::parse($data['createdAt']),
             isBillable: $data['isBillable']
         );

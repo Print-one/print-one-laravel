@@ -16,6 +16,17 @@ class Address implements Arrayable
         //
     }
 
+    public static function fromArray(array $data): self
+    {
+        return new Address(
+            name: $data['name'],
+            address: $data['address'],
+            postalCode: $data['postalCode'],
+            city: $data['city'],
+            country: $data['country']
+        );
+    }
+
     public function toArray(): array
     {
         return [

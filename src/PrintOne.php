@@ -9,6 +9,8 @@ use Nexibi\PrintOne\Contracts\PrintOneApi;
 use Nexibi\PrintOne\DTO\Address;
 use Nexibi\PrintOne\DTO\Order;
 use Nexibi\PrintOne\DTO\Template;
+use Nexibi\PrintOne\Enums\Finish;
+use Nexibi\PrintOne\Exceptions\CouldNotFetchOrder;
 use Nexibi\PrintOne\Exceptions\CouldNotFetchPreview;
 use Nexibi\PrintOne\Exceptions\CouldNotFetchTemplates;
 use Nexibi\PrintOne\Exceptions\CouldNotPlaceOrder;
@@ -27,9 +29,13 @@ class PrintOne implements PrintOneApi
             ]);
     }
 
-    public function templates(int $page, int $size): Collection
+    /**
+     * @throws CouldNotFetchOrder
+     *                            CHECKED
+     */
+    public function templates(int $page = 0, int $limit = 20): Collection
     {
-        $response = $this->http->get('templates', ['page' => $page, 'size' => $size]);
+        $response = $this->http->get('templates', ['page' => $page, 'limit' => $limit]);
 
         if ($response->serverError()) {
             throw new CouldNotFetchTemplates(
@@ -42,17 +48,17 @@ class PrintOne implements PrintOneApi
             ->map(fn ($data) => Template::fromArray($data));
     }
 
-    public function order(string $templateId, string $finish, array $mergeVariables, Address $sender, Address $recipient): Order
+    public function order(string $templateId, Finish $finish, Address $recipient, Address $sender, array $mergeVariables = []): Order
     {
         $data = [
             'sender' => $sender->toArray(),
             'recipient' => $recipient->toArray(),
             'templateId' => $templateId,
-            'finish' => $finish,
+            'finish' => $finish->value,
         ];
 
         if (! empty($mergeVariables)) {
-            $data['mergeVariables'] = $mergeVariables;
+            $data['mergeVariables'] = (object) $mergeVariables;
         }
 
         $response = $this->http->post('orders', $data);
@@ -72,6 +78,7 @@ class PrintOne implements PrintOneApi
 
     /**
      * @throws CouldNotFetchOrder
+     *                            CHECKED
      */
     public function getOrder(string $orderId): Order
     {
@@ -85,15 +92,21 @@ class PrintOne implements PrintOneApi
 
     /**
      * @throws CouldNotFetchPreview
+     *                              CHECKED
      */
-    public function preview(Template $template, int $retryTimes = 5): string
+    public function preview(Template $template, int $retryTimes = 10): string
     {
-        $response = $this->http->post("templates/preview/{$template->id}/{$template->version}");
+        $response = $this->http->post("templates/preview/{$template->id}/{$template->version}", ['mergeVariables' => (object) []]);
+
         if ($response->failed()) {
             throw new CouldNotFetchPreview('Something went wrong while fetching the preview from the Print.one API.');
         }
 
-        $previewUrl = $response->json('url');
+        $responseData = collect($response->json())
+            ->map(fn (array $a) => (object) $a);
+
+        // The first item is often the front side of the template
+        $previewUrl = $responseData->first()->url;
 
         $response = rescue(
             fn () => $this->http->retry($retryTimes, 1000)->get($previewUrl),
@@ -109,6 +122,7 @@ class PrintOne implements PrintOneApi
 
     /**
      * @throws CouldNotFetchPreview
+     *                              CHECKED
      */
     public function previewOrder(Order $order): string
     {

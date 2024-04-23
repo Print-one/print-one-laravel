@@ -2,17 +2,13 @@
 
 namespace Nexibi\PrintOne\Enums;
 
-class Format
+enum Format: string
 {
-    public const SQ15 = 'POSTCARD_SQ15';
+    case SQ15 = 'POSTCARD_SQ15';
+    case A5 = 'POSTCARD_A5';
+    case A6 = 'POSTCARD_A6';
 
-    public const A5 = 'POSTCARD_A5';
-
-    public const A6 = 'POSTCARD_A6';
-
-    public const ECO_SQ15 = 'ECOCARD_SQ15';
-
-    public const ECO_A5 = 'ECOCARD_A5';
-
-    public const ECO_A6 = 'ECOCARD_A6';
+    case ECO_SQ15 = 'ECOCARD_SQ15';
+    case ECO_A5 = 'ECOCARD_A5';
+    case ECO_A6 = 'ECOCARD_A6';
 }

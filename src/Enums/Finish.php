@@ -2,9 +2,8 @@
 
 namespace Nexibi\PrintOne\Enums;
 
-class Finish
+enum Finish: string
 {
-    public const GLOSSY = 'GLOSSY';
-
-    public const MATTE = 'MATTE';
+    case GLOSSY = 'GLOSSY';
+    case MATTE = 'MATTE';
 }
