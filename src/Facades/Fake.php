@@ -8,6 +8,7 @@ use Nexibi\PrintOne\Contracts\PrintOneApi;
 use Nexibi\PrintOne\DTO\Address;
 use Nexibi\PrintOne\DTO\Order;
 use Nexibi\PrintOne\DTO\Template;
+use Nexibi\PrintOne\Enums\Finish;
 use PHPUnit\Framework\Assert;
 
 class Fake implements PrintOneApi
@@ -26,12 +27,12 @@ class Fake implements PrintOneApi
         $this->templates = collect($templates);
     }
 
-    public function templates(int $page, int $size): Collection
+    public function templates(int $page, int $limit): Collection
     {
         return $this->templates;
     }
 
-    public function order(string $templateId, string $finish, array $mergeVariables, Address $sender, Address $recipient): Order
+    public function order(string $templateId, Finish $finish, Address $recipient, Address $sender, array $mergeVariables = []): Order
     {
         $this->orders->push(['templateId' => $templateId, 'finish' => $finish, 'from' => $sender, 'to' => $recipient]);
 
@@ -47,14 +48,14 @@ class Fake implements PrintOneApi
         return '';
     }
 
-    public function assertOrdered(string $templateId, string $finish, Address $from, Address $to): void
+    public function assertOrdered(string $templateId, Finish $finish, Address $from, Address $to): void
     {
         $order = $this->orders->where('templateId', $templateId)
             ->where('finish', $finish)
             ->where('from', $from)->where('to', $to)->first();
         Assert::assertNotNull(
             $order,
-            "Failed asserting postcard with template ID: '{$templateId}' and finish: '{$finish}' was ordered from {$from->name} to {$to->name}"
+            "Failed asserting postcard with template ID: '{$templateId}' and finish: '{$finish->value}' was ordered from {$from->name} to {$to->name}"
         );
     }
 

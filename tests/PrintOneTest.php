@@ -79,20 +79,20 @@ class PrintOneTest extends TestCase
             'https://api.print.one/v2/templates?*' => Http::response($fakeResponse),
         ]);
 
-        $templates = PrintOne::templates(page: 1, size: 50);
+        $templates = PrintOne::templates(page: 1, limit: 50);
 
         $this->assertInstanceOf(Collection::class, $templates);
         $this->assertContainsOnlyInstancesOf(Template::class, $templates);
 
         $this->assertEquals($fakeResponse['data'][0]['id'], $templates[0]->id);
         $this->assertEquals($fakeResponse['data'][0]['name'], $templates[0]->name);
-        $this->assertEquals($fakeResponse['data'][0]['format'], $templates[0]->format);
+        $this->assertEquals($fakeResponse['data'][0]['format'], $templates[0]->format->value);
         $this->assertEquals($fakeResponse['data'][0]['version'], $templates[0]->version);
         $this->assertTrue(Carbon::parse($fakeResponse['data'][0]['updatedAt'], 'UTC')->eq($templates[0]->updatedAt));
 
         Http::assertSent(function (Request $request) {
             return $request->hasHeader('X-Api-Key', 'foo') && $request->url(
-            ) === 'https://api.print.one/v2/templates?page=1&size=50';
+            ) === 'https://api.print.one/v2/templates?page=1&limit=50';
         });
     }
 
@@ -105,7 +105,7 @@ class PrintOneTest extends TestCase
         $this->expectException(CouldNotFetchTemplates::class);
         $this->expectExceptionMessage('Something went wrong while fetching the templates from the Print.one API.');
 
-        PrintOne::templates(page: 1, size: 50);
+        PrintOne::templates(page: 1, limit: 50);
     }
 
     public function test_it_can_order_a_card(): void
@@ -155,10 +155,13 @@ class PrintOneTest extends TestCase
             recipient: $recipient
         );
 
+        //dd($order);
+
         Http::assertSent(
+            // fn (Request $request) => dd($request)
             fn (Request $request) => $request->url() === 'https://api.print.one/v2/orders' &&
                 $request['templateId'] === $templateId &&
-                $request['finish'] === $finish &&
+                $request['finish'] === $finish->value &&
                 $request['sender'] === $sender->toArray() &&
                 $request['recipient'] === $recipient->toArray()
         );
@@ -233,7 +236,11 @@ class PrintOneTest extends TestCase
 
         Http::fake([
             'https://api.print.one/v2/templates/preview/*' => Http::response(
-                ['url' => 'https://api.print.one/v2/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede']
+                [
+                    [
+                        'url' => 'https://api.print.one/v2/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede',
+                    ],
+                ]
             ),
             'https://api.print.one/v2/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede' => Http::response($imageString, 200, [
                 'Content-type' => 'image/png',
@@ -263,7 +270,11 @@ class PrintOneTest extends TestCase
     public function test_it_throws_exception_when_fetching_preview_fails(): void
     {
         Http::fake([
-            'https://api.print.one/v2/templates/preview/*' => Http::response(['url' => 'https://api.print.one/v2/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede']),
+            'https://api.print.one/v2/templates/preview/*' => Http::response([
+                [
+                    'url' => 'https://api.print.one/v2/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede',
+                ],
+            ]),
             'https://api.print.one/v2/storage/template/preview/3c9d6b72-48a5-41f3-bcac-a5ffdd6eaede' => Http::response(
                 status: Response::HTTP_INTERNAL_SERVER_ERROR
             ),
