@@ -25,7 +25,6 @@ jobs:
             testbench: 9.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
-    if: 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
