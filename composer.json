@@ -1,6 +1,6 @@
 {
     "name": "print-one/print-one-laravel",
-    "description": "This is my package print-one",
+    "description": "The official laravel package for Print.one",
     "keywords": [
         "laravel",
         "print.one",
