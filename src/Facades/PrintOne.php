@@ -1,15 +1,15 @@
 <?php
 
-namespace Nexibi\PrintOne\Facades;
+namespace PrintOne\PrintOne\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Nexibi\PrintOne\Contracts\PrintOneApi;
-use Nexibi\PrintOne\DTO\Template;
+use PrintOne\PrintOne\Contracts\PrintOneApi;
+use PrintOne\PrintOne\DTO\Template;
 
 /**
- * @see \Nexibi\PrintOne\PrintOne
+ * @see \PrintOne\PrintOne\PrintOne
  *
- * @mixin \Nexibi\PrintOne\PrintOne
+ * @mixin \PrintOne\PrintOne\PrintOne
  */
 class PrintOne extends Facade
 {
@@ -22,6 +22,6 @@ class PrintOne extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return \Nexibi\PrintOne\PrintOne::class;
+        return \PrintOne\PrintOne\PrintOne::class;
     }
 }

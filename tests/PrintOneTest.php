@@ -1,6 +1,6 @@
 <?php
 
-namespace Nexibi\PrintOne\Tests;
+namespace PrintOne\PrintOne\Tests;
 
 use Carbon\Carbon;
 use Illuminate\Http\Client\Request;
@@ -9,15 +9,15 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use Nexibi\PrintOne\DTO\Address;
-use Nexibi\PrintOne\DTO\Order;
-use Nexibi\PrintOne\DTO\Template;
-use Nexibi\PrintOne\Enums\Finish;
-use Nexibi\PrintOne\Enums\Format;
-use Nexibi\PrintOne\Exceptions\CouldNotFetchPreview;
-use Nexibi\PrintOne\Exceptions\CouldNotFetchTemplates;
-use Nexibi\PrintOne\Exceptions\CouldNotPlaceOrder;
-use Nexibi\PrintOne\Facades\PrintOne;
+use PrintOne\PrintOne\DTO\Address;
+use PrintOne\PrintOne\DTO\Order;
+use PrintOne\PrintOne\DTO\Template;
+use PrintOne\PrintOne\Enums\Finish;
+use PrintOne\PrintOne\Enums\Format;
+use PrintOne\PrintOne\Exceptions\CouldNotFetchPreview;
+use PrintOne\PrintOne\Exceptions\CouldNotFetchTemplates;
+use PrintOne\PrintOne\Exceptions\CouldNotPlaceOrder;
+use PrintOne\PrintOne\Facades\PrintOne;
 
 class PrintOneTest extends TestCase
 {

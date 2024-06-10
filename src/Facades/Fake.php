@@ -1,14 +1,14 @@
 <?php
 
-namespace Nexibi\PrintOne\Facades;
+namespace PrintOne\PrintOne\Facades;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Nexibi\PrintOne\Contracts\PrintOneApi;
-use Nexibi\PrintOne\DTO\Address;
-use Nexibi\PrintOne\DTO\Order;
-use Nexibi\PrintOne\DTO\Template;
-use Nexibi\PrintOne\Enums\Finish;
+use PrintOne\PrintOne\Contracts\PrintOneApi;
+use PrintOne\PrintOne\DTO\Address;
+use PrintOne\PrintOne\DTO\Order;
+use PrintOne\PrintOne\DTO\Template;
+use PrintOne\PrintOne\Enums\Finish;
 use PHPUnit\Framework\Assert;
 
 class Fake implements PrintOneApi

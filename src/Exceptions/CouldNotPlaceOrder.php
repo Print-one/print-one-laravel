@@ -1,6 +1,6 @@
 <?php
 
-namespace Nexibi\PrintOne\Exceptions;
+namespace PrintOne\PrintOne\Exceptions;
 
 use Exception;
 

@@ -1,7 +1,5 @@
 # Print-one Laravel
 
-[![Issues][issues-img]][issues-url]
-
 > The official laravel package for [Print.one](https://print.one)
 
 Laravel package that lets you send automated personalized postcards using Print.one.
@@ -24,7 +22,7 @@ php artisan vendor:publish --tag="print-one-config"
 
 ```php
 use Illuminate\Support\Facades\Config;
-use Nexibi\PrintOne\Facades\PrintOne;
+use PrintOne\PrintOne\Facades\PrintOne;
 
 Config::set('print-one.api_key', 'live_your-api-key');
 PrintOne::templates(); // Get available templates
@@ -36,3 +34,5 @@ PrintOne::templates(); // Get available templates
 - For other questions, feel free to contact us at [our support page](https://support.print.one).
 
 
+## Credits
+Initial project was developed by [Nexibi](https://github.com/Nexibi/print-one)

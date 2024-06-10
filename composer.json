@@ -15,6 +15,11 @@
     "license": "MIT",
     "authors": [
         {
+            "name": "Print.one Development",
+            "email": "dev@print.one",
+            "role": "Developer"    
+        },
+        {
             "name": "Nexxtmove",
             "email": "tech@nexxtmove.nl",
             "role": "Developer"
@@ -22,11 +27,6 @@
         {
             "name": "Sibi",
             "email": "dev@sibi.nl",
-            "role": "Developer"
-        },
-        {
-            "name": "Print.one Development",
-            "email": "dev@print.one",
             "role": "Developer"
         }
     ],
@@ -45,12 +45,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Nexibi\\PrintOne\\": "src"
+            "PrintOne\\PrintOne\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Nexibi\\PrintOne\\Tests\\": "tests"
+            "PrintOne\\PrintOne\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -64,10 +64,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Nexibi\\PrintOne\\PrintOneServiceProvider"
+                "PrintOne\\PrintOne\\PrintOneServiceProvider"
             ],
             "aliases": {
-                "PrintOne": "Nexibi\\PrintOne\\Facades\\PrintOne"
+                "PrintOne": "PrintOne\\PrintOne\\Facades\\PrintOne"
             }
         }
     },

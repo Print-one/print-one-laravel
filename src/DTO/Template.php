@@ -1,6 +1,6 @@
 <?php
 
-namespace Nexibi\PrintOne\DTO;
+namespace PrintOne\PrintOne\DTO;
 
 use Carbon\Carbon;
 use Nexibi\PrintOne\Enums\Format;

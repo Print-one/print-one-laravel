@@ -1,19 +1,19 @@
 <?php
 
-namespace Nexibi\PrintOne;
+namespace PrintOne\PrintOne;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Nexibi\PrintOne\Contracts\PrintOneApi;
-use Nexibi\PrintOne\DTO\Address;
-use Nexibi\PrintOne\DTO\Order;
-use Nexibi\PrintOne\DTO\Template;
-use Nexibi\PrintOne\Enums\Finish;
-use Nexibi\PrintOne\Exceptions\CouldNotFetchOrder;
-use Nexibi\PrintOne\Exceptions\CouldNotFetchPreview;
-use Nexibi\PrintOne\Exceptions\CouldNotFetchTemplates;
-use Nexibi\PrintOne\Exceptions\CouldNotPlaceOrder;
+use PrintOne\PrintOne\Contracts\PrintOneApi;
+use PrintOne\PrintOne\DTO\Address;
+use PrintOne\PrintOne\DTO\Order;
+use PrintOne\PrintOne\DTO\Template;
+use PrintOne\PrintOne\Enums\Finish;
+use PrintOne\PrintOne\Exceptions\CouldNotFetchOrder;
+use PrintOne\PrintOne\Exceptions\CouldNotFetchPreview;
+use PrintOne\PrintOne\Exceptions\CouldNotFetchTemplates;
+use PrintOne\PrintOne\Exceptions\CouldNotPlaceOrder;
 
 class PrintOne implements PrintOneApi
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Nexibi\PrintOne\Contracts;
+namespace PrintOne\PrintOne\Contracts;
 
 use Illuminate\Support\Collection;
-use Nexibi\PrintOne\DTO\Address;
-use Nexibi\PrintOne\DTO\Order;
-use Nexibi\PrintOne\DTO\Template;
-use Nexibi\PrintOne\Enums\Finish;
+use PrintOne\PrintOne\DTO\Address;
+use PrintOne\PrintOne\DTO\Order;
+use PrintOne\PrintOne\DTO\Template;
+use PrintOne\PrintOne\Enums\Finish;
 
 interface PrintOneApi
 {
