@@ -31,7 +31,6 @@ class PrintOne implements PrintOneApi
 
     /**
      * @throws CouldNotFetchOrder
-     *                            CHECKED
      */
     public function templates(int $page = 0, int $limit = 20): Collection
     {
@@ -78,7 +77,6 @@ class PrintOne implements PrintOneApi
 
     /**
      * @throws CouldNotFetchOrder
-     *                            CHECKED
      */
     public function getOrder(string $orderId): Order
     {
@@ -92,7 +90,6 @@ class PrintOne implements PrintOneApi
 
     /**
      * @throws CouldNotFetchPreview
-     *                              CHECKED
      */
     public function preview(Template $template, int $retryTimes = 10): string
     {
@@ -122,7 +119,6 @@ class PrintOne implements PrintOneApi
 
     /**
      * @throws CouldNotFetchPreview
-     *                              CHECKED
      */
     public function previewOrder(Order $order): string
     {
