@@ -1,7 +1,10 @@
 # Print-one Laravel
 
-![Packagist Version](https://img.shields.io/packagist/v/Print-one/print-one-laravel)
+[![packagist package][packagist-img]][packagist-url]
 [![Issues][issues-img]][issues-url]
+
+[packagist-img]:https://img.shields.io/packagist/v/Print-one/print-one-laravel
+[packagist-url]:https://packagist.org/packages/print-one/print-one-laravel
 
 [issues-img]:https://img.shields.io/github/issues/Print-one/print-one-laravel/bug
 [issues-url]:https://github.com/Print-one/print-one-laravel/issues
