@@ -1,6 +1,7 @@
 {
     "name": "print-one/print-one-laravel",
     "description": "The official laravel package for Print.one",
+    "version": "1.0.0",
     "keywords": [
         "laravel",
         "print.one",
