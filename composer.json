@@ -2,7 +2,6 @@
     "name": "print-one/print-one-laravel",
     "description": "This is my package print-one",
     "keywords": [
-        "nexibi",
         "laravel",
         "print.one",
         "printing",
@@ -28,19 +27,21 @@
         {
             "name": "Print.one Development",
             "email": "dev@print.one",
-            "role": "Developer"    
+            "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
+        "ext-iconv": "*",
         "guzzlehttp/guzzle": "^7.5",
-        "illuminate/contracts": "^8.0|^9.0",
+        "illuminate/contracts": "^9.0",
+        "laravel/framework": "9.*",
+        "orchestra/testbench": "7.*",
+        "phpunit/phpunit": "^9.5.10",
         "spatie/laravel-package-tools": "^1.12.0|^1.13.6"
     },
     "require-dev": {
-        "laravel/pint": "^1.0",
-        "orchestra/testbench": "^6.0|^7.0",
-        "phpunit/phpunit": "^9.5"
+        "laravel/pint": "^1.0"
     },
     "autoload": {
         "psr-4": {

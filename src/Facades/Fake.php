@@ -7,8 +7,8 @@ use Illuminate\Support\Str;
 use Nexibi\PrintOne\Contracts\PrintOneApi;
 use Nexibi\PrintOne\DTO\Address;
 use Nexibi\PrintOne\DTO\Order;
-use Nexibi\PrintOne\DTO\Postcard;
 use Nexibi\PrintOne\DTO\Template;
+use Nexibi\PrintOne\Enums\Finish;
 use PHPUnit\Framework\Assert;
 
 class Fake implements PrintOneApi
@@ -27,33 +27,35 @@ class Fake implements PrintOneApi
         $this->templates = collect($templates);
     }
 
-    public function templates(int $page, int $size): Collection
+    public function templates(int $page, int $limit): Collection
     {
         return $this->templates;
     }
 
-    public function order(Postcard $postcard, array $mergeVariables, Address $sender, Address $recipient): Order
+    public function order(string $templateId, Finish $finish, Address $recipient, Address $sender, array $mergeVariables = []): Order
     {
-        $this->orders->push(['postcard' => $postcard, 'from' => $sender, 'to' => $recipient]);
+        $this->orders->push(['templateId' => $templateId, 'finish' => $finish, 'from' => $sender, 'to' => $recipient]);
 
         return new Order(
-            id: Str::uuid(), status: 'status', createdAt: now(), isBillable: false
+            id: Str::uuid(), status: 'status', templateId: $templateId, finish: $finish, createdAt: now(), isBillable: false
         );
     }
 
-    public function preview(Template $template, int $timeout = 30): string
+    public function preview(Template $template, int $retryTimes = 30): string
     {
         $this->viewed->push($template);
 
         return '';
     }
 
-    public function assertOrdered(Postcard $postcard, Address $from, Address $to): void
+    public function assertOrdered(string $templateId, Finish $finish, Address $from, Address $to): void
     {
-        $order = $this->orders->where('postcard', $postcard)->where('from', $from)->where('to', $to)->first();
+        $order = $this->orders->where('templateId', $templateId)
+            ->where('finish', $finish)
+            ->where('from', $from)->where('to', $to)->first();
         Assert::assertNotNull(
             $order,
-            "Failed asserting postcard with front: '{$postcard->front}' and back: '{$postcard->back}' was ordered from {$from->name} to {$to->name}"
+            "Failed asserting postcard with template ID: '{$templateId}' and finish: '{$finish->value}' was ordered from {$from->name} to {$to->name}"
         );
     }
 
