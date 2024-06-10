@@ -407,7 +407,7 @@ class PrintOneTest extends TestCase
         $finish = Finish::GLOSSY;
 
         $sender = new Address(
-            name: 'Nexibi',
+            name: 'print.one',
             address: 'Sendstreet 10',
             postalCode: '1234 AB',
             city: 'Zwolle',

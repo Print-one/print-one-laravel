@@ -3,7 +3,7 @@
 namespace PrintOne\PrintOne\DTO;
 
 use Carbon\Carbon;
-use Nexibi\PrintOne\Enums\Format;
+use PrintOne\PrintOne\Enums\Format;
 
 class Template
 {

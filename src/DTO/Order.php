@@ -4,7 +4,7 @@ namespace PrintOne\PrintOne\DTO;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
-use Nexibi\PrintOne\Enums\Finish;
+use PrintOne\PrintOne\Enums\Finish;
 
 class Order implements Arrayable
 {

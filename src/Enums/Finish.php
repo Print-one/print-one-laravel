@@ -1,6 +1,6 @@
 <?php
 
-namespace Nexibi\PrintOne\Enums;
+namespace PrintOne\PrintOne\Enums;
 
 enum Finish: string
 {
