@@ -1,5 +1,11 @@
 # Print-one Laravel
 
+![Packagist Version](https://img.shields.io/packagist/v/Print-one/print-one-laravel)
+[![Issues][issues-img]][issues-url]
+
+[issues-img]:https://img.shields.io/github/issues/Print-one/print-one-laravel/bug
+[issues-url]:https://github.com/Print-one/print-one-laravel/issues
+
 > The official laravel package for [Print.one](https://print.one)
 
 Laravel package that lets you send automated personalized postcards using Print.one.
