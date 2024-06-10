@@ -1,12 +1,18 @@
 {
-    "name": "nexibi/print-one",
+    "name": "print-one/print-one-laravel",
     "description": "This is my package print-one",
     "keywords": [
         "nexibi",
         "laravel",
-        "print-one"
+        "print.one",
+        "printing",
+        "rest",
+        "print-and-mail",
+        "postcard",
+        "post",
+        "api"
     ],
-    "homepage": "https://github.com/nexibi/print-one",
+    "homepage": "https://github.com/Print-one/print-one-laravel",
     "license": "MIT",
     "authors": [
         {
@@ -18,6 +24,11 @@
             "name": "Sibi",
             "email": "dev@sibi.nl",
             "role": "Developer"
+        },
+        {
+            "name": "Print.one Development",
+            "email": "dev@print.one",
+            "role": "Developer"    
         }
     ],
     "require": {
